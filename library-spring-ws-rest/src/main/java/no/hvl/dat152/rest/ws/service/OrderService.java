@@ -55,7 +55,7 @@ public class OrderService {
 	}
 
 	public Order updateOrder(Order order, Long id) throws UserNotFoundException {
-		if (!orderRepository.existsById(id) || order.getId() == id) {
+		if (!orderRepository.existsById(id) || order.getId() != id) {
 			throw new UserNotFoundException("Order not found");
 		}
 

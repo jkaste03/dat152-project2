@@ -5,6 +5,7 @@ package no.hvl.dat152.rest.ws.service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,16 +47,30 @@ public class BookService {
 		return book;
 	}
 
-	// TODO public Book updateBook(Book book, String isbn)
+	public Book updateBook(Book book, String isbn) throws BookNotFoundException {
+		if (!bookRepository.existsByIsbn(isbn) || !book.getIsbn().equals(isbn)) {
+			throw new BookNotFoundException("Book not found");
+		}
 
-	// TODO public List<Book> findAllPaginate(Pageable page)
-
-	public Set<Author> findAuthorsOfBookByISBN(String isbn) {
-		return bookRepository.findAuthorsOfBookByIsbn(isbn);
+		return bookRepository.save(book);
 	}
 
-	// TODO public void deleteById(long id)
+	// public List<Book> findAllPaginate(Pageable page) {
 
-	// TODO public void deleteByISBN(String isbn)
+	// }
+
+	public Set<Author> findAuthorsOfBookByISBN(String isbn) {
+		Book book = bookRepository.findBookByISBN(isbn);
+		return book.getAuthors();
+	}
+
+	public void deleteById(long id) throws BookNotFoundException {
+		bookRepository.deleteById(id);
+	}
+
+	public void deleteByISBN(String isbn) throws BookNotFoundException {
+		Book book = findByISBN(isbn);
+		bookRepository.delete(book);
+	}
 
 }

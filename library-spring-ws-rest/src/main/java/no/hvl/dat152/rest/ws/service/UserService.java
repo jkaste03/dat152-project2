@@ -14,6 +14,7 @@ import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
 import no.hvl.dat152.rest.ws.model.Order;
 import no.hvl.dat152.rest.ws.model.User;
+import no.hvl.dat152.rest.ws.repository.OrderRepository;
 import no.hvl.dat152.rest.ws.repository.UserRepository;
 
 /**
@@ -25,6 +26,9 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private OrderRepository orderRepository;
+
 	public List<User> findAllUsers() {
 
 		List<User> allUsers = (List<User>) userRepository.findAll();
@@ -32,10 +36,10 @@ public class UserService {
 		return allUsers;
 	}
 
-	public User findUser(Long userid) throws UserNotFoundException {
+	public User findUser(Long id) throws UserNotFoundException {
 
-		User user = userRepository.findById(userid)
-				.orElseThrow(() -> new UserNotFoundException("User with id: " + userid + " not found"));
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found"));
 
 		return user;
 	}
@@ -82,11 +86,12 @@ public class UserService {
 		userRepository.save(user);
 	}
 
-	public User createOrdersForUser(Long userid, Order order) throws UserNotFoundException {
+	public Set<Order> createOrdersForUser(Long userid, Order order) throws UserNotFoundException {
 		User user = userRepository.findById(userid)
 				.orElseThrow(() -> new UserNotFoundException("User not found for id: " + userid));
-
+		orderRepository.save(order);
 		user.getOrders().add(order);
-		return userRepository.save(user);
+		userRepository.save(user);
+		return user.getOrders();
 	}
 }
