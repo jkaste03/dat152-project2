@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
+import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
 import no.hvl.dat152.rest.ws.model.Order;
 import no.hvl.dat152.rest.ws.repository.OrderRepository;
 
@@ -23,28 +24,42 @@ public class OrderService {
 
 	@Autowired
 	private OrderRepository orderRepository;
-	
+
 	public Order saveOrder(Order order) {
-		
+
 		order = orderRepository.save(order);
-		
+
 		return order;
 	}
-	
+
 	public Order findOrder(Long id) throws OrderNotFoundException {
-		
+
 		Order order = orderRepository.findById(id)
-				.orElseThrow(()-> new OrderNotFoundException("Order with id: "+id+" not found in the order list!"));
-		
+				.orElseThrow(
+						() -> new OrderNotFoundException("Order with id: " + id + " not found in the order list!"));
+
 		return order;
 	}
-	
-	// TODO public void deleteOrder(Long id)
-	
-	// TODO public List<Order> findAllOrders()
-	
-	// TODO public List<Order> findByExpiryDate(LocalDate expiry, Pageable page)
-	
-	// TODO public Order updateOrder(Order order, Long id)
+
+	public void deleteOrder(Long id) throws OrderNotFoundException {
+		Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException("Order not found"));
+		orderRepository.delete(order);
+	}
+
+	public List<Order> findAllOrders() {
+		return orderRepository.findAll();
+	}
+
+	public List<Order> findByExpiryDate(LocalDate expiry, Pageable page) {
+		return orderRepository.findByExpiry(expiry, page);
+	}
+
+	public Order updateOrder(Order order, Long id) throws UserNotFoundException {
+		if (!orderRepository.existsById(id) || order.getId() == id) {
+			throw new UserNotFoundException("Order not found");
+		}
+
+		return orderRepository.save(order);
+	}
 
 }

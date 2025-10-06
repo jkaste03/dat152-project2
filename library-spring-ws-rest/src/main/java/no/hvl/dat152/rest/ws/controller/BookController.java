@@ -70,11 +70,6 @@ public class BookController {
 	}
 
 	// TODO - getAuthorsOfBookByISBN (@Mappings, URI, and method)
-	@GetMapping("/books/{isbn}")
-	public ResponseEntity<Set<Author>> getAuthorsOfBooksByISBN(@PathVariable String isbn) {
-		Set<Author> authors = bookService.findAuthorsOfBookByISBN(isbn);
-		return new ResponseEntity<>(authors, HttpStatus.OK);
-	}
 
 	// TODO - updateBookByISBN (@Mappings, URI, and method)
 

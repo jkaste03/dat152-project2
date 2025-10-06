@@ -31,7 +31,7 @@ public interface BookRepository extends CrudRepository<Book, Long>, PagingAndSor
 	@Query("SELECT b FROM Book b WHERE b.isbn = :isbn")
 	Book findBookByISBN(@Param("isbn") String isbn);
 
-	Set<Author> findAuthorsOfBookByISBN(String isbn);
+	Set<Author> findAuthorsOfBookByIsbn(String isbn);
 
 	@Query("SELECT b FROM Book b join b.authors a WHERE a.authorId = :authorId")
 	List<Book> findBooksByAuthorId(@Param("authorId") int authorId);

@@ -50,9 +50,8 @@ public class BookService {
 
 	// TODO public List<Book> findAllPaginate(Pageable page)
 
-	// TODO public Set<Author> findAuthorsOfBookByISBN(String isbn)
 	public Set<Author> findAuthorsOfBookByISBN(String isbn) {
-		return bookRepository.findAuthorsOfBookByISBN(isbn);
+		return bookRepository.findAuthorsOfBookByIsbn(isbn);
 	}
 
 	// TODO public void deleteById(long id)

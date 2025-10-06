@@ -19,36 +19,36 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-
 /**
  * @author tdoy
  */
 @Entity
 @Table(name = "users")
-public class User extends RepresentationModel<User>{
+public class User extends RepresentationModel<User> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long userid;
-	
+
 	@Column(nullable = false)
 	private String firstname;
-	
+
 	@Column(nullable = false)
 	private String lastname;
-	
+
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", referencedColumnName = "userid")
 	private Set<Order> orders = new HashSet<>();
 
 	public User() {
-		//default
+		// default
 	}
-	
+
 	public User(String firstname, String lastname) {
 		this.firstname = firstname;
 		this.lastname = lastname;
 	}
+
 	/**
 	 * @return the userid
 	 */
@@ -104,41 +104,41 @@ public class User extends RepresentationModel<User>{
 	public void setOrders(Set<Order> orders) {
 		this.orders = orders;
 	}
-	
+
 	public void addOrder(Order order) {
 		orders.add(order);
 	}
-	
+
 	public void removeOrder(Order order) {
 		orders.remove(order);
 	}
-	
-//	@Override
-//    public final int hashCode() {
-//		final int prime = 31;
-//		int result = 1;
-//		result = prime * result + 
-//				((userid == 0) ? 0 :Long.valueOf(userid).hashCode());
-//		result = prime * result + ((firstname == null) ? 0 : firstname.hashCode());
-//		result = prime * result + ((lastname == null) ? 0 : lastname.hashCode());
-//		
-//        return result;
-//    }
-//	
-//	@Override
-//	public final boolean equals(final Object obj) {
-//		if (this == obj) {
-//            return true;
-//        }
-//        if (obj == null) {
-//            return false;
-//        }
-//        if (getClass() != obj.getClass()) {
-//            return false;
-//        }
-//        User other = (User)obj;
-//        
-//        return this.userid == other.userid;
-//	}
-	
+
+	@Override
+	public final int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result +
+				((userid == 0) ? 0 : Long.valueOf(userid).hashCode());
+		result = prime * result + ((firstname == null) ? 0 : firstname.hashCode());
+		result = prime * result + ((lastname == null) ? 0 : lastname.hashCode());
+
+		return result;
+	}
+
+	@Override
+	public final boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		User other = (User) obj;
+
+		return this.userid == other.userid;
+	}
+
 }
