@@ -39,39 +39,51 @@ public class BookController {
 
 	@Autowired
 	private BookService bookService;
-	
+
 	@GetMapping("/books")
-	public ResponseEntity<Object> getAllBooks(){
-		
+	public ResponseEntity<Object> getAllBooks() {
+
 		List<Book> books = bookService.findAll();
-		
-		if(books.isEmpty())
+
+		if (books.isEmpty())
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		
-		return new ResponseEntity<>(books, HttpStatus.OK);		
+
+		return new ResponseEntity<>(books, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/books/{isbn}")
-	public ResponseEntity<Object> getBook(@PathVariable String isbn) throws BookNotFoundException{
-		
+	public ResponseEntity<Object> getBook(@PathVariable String isbn) throws BookNotFoundException {
+
 		Book book = bookService.findByISBN(isbn);
-		
-		return new ResponseEntity<>(book, HttpStatus.OK);
-				
+
+		if (book == null)
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		else
+			return new ResponseEntity<>(book, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/books")
-	public ResponseEntity<Book> createBook(@RequestBody Book book){
-		
+	public ResponseEntity<Book> createBook(@RequestBody Book book) {
+
 		Book nbook = bookService.saveBook(book);
-		
+
 		return new ResponseEntity<>(nbook, HttpStatus.CREATED);
 	}
-	
-	// TODO - getAuthorsOfBookByISBN (@Mappings, URI, and method)
-	
-	// TODO - updateBookByISBN (@Mappings, URI, and method)
-	
-	// TODO - deleteBookByISBN (@Mappings, URI, and method)
 
+	// TODO - getAuthorsOfBookByISBN (@Mappings, URI, and method)
+
+	@PutMapping("/books/{isbn}")
+	public ResponseEntity<Book> updateBook(@PathVariable String isbn, @RequestBody Book book)
+			throws BookNotFoundException {
+		bookService.findByISBN(isbn); // Will catch exception if not found
+		Book uBook = bookService.saveBook(book);
+		return new ResponseEntity<>(uBook, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/books/{isbn}")
+	public ResponseEntity<Void> deleteBook(@PathVariable String isbn) throws BookNotFoundException {
+		bookService.deleteByISBN(isbn);
+
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 }

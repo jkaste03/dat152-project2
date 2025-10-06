@@ -25,37 +25,46 @@ public class BookService {
 
 	@Autowired
 	private BookRepository bookRepository;
-	
-	
+
 	public Book saveBook(Book book) {
-		
+
 		return bookRepository.save(book);
-		
+
 	}
-	
-	public List<Book> findAll(){
-		
+
+	public List<Book> findAll() {
+
 		return (List<Book>) bookRepository.findAll();
-		
+
 	}
-	
-	
+
 	public Book findByISBN(String isbn) throws BookNotFoundException {
-		
-		Book book = bookRepository.findByIsbn(isbn)
-				.orElseThrow(() -> new BookNotFoundException("Book with isbn = "+isbn+" not found!"));
-		
-		return book;
+
+		Book book = null;
+		try {
+			book = bookRepository.findBookByISBN(isbn);
+		} catch (Exception e) {
+			throw new BookNotFoundException("Book with isbn = " + isbn + " not found!");
+		}
+
+		if (book == null)
+			throw new BookNotFoundException("Book with isbn = " + isbn + " not found!");
+		else
+			return book;
 	}
-	
+
+	public void deleteByISBN(String isbn) throws BookNotFoundException {
+		bookRepository.delete(findByISBN(isbn));
+	}
+
 	// TODO public Book updateBook(Book book, String isbn)
-	
+
 	// TODO public List<Book> findAllPaginate(Pageable page)
-	
+
 	// TODO public Set<Author> findAuthorsOfBookByISBN(String isbn)
-	
+
 	// TODO public void deleteById(long id)
-	
-	// TODO public void deleteByISBN(String isbn) 
-	
+
+	// TODO public void deleteByISBN(String isbn)
+
 }

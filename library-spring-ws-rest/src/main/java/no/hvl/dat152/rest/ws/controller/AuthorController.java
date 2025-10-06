@@ -29,16 +29,45 @@ import no.hvl.dat152.rest.ws.service.AuthorService;
 @RequestMapping("/elibrary/api/v1")
 public class AuthorController {
 
-	
-	// TODO - getAllAuthor (@Mappings, URI, and method)
-	
-	// TODO - getAuthor (@Mappings, URI, and method)
-	
-	// TODO - getBooksByAuthorId (@Mappings, URI, and method)
-	
-	// TODO - createAuthor (@Mappings, URI, and method)
-	
-	// TODO - updateAuthor (@Mappings, URI, and method)
+	private final AuthorService authorService;
 
+	public AuthorController(AuthorService authorService) {
+		this.authorService = authorService;
+	}
+
+	@GetMapping("/authors")
+	public ResponseEntity<Object> getAllAuthors() {
+		List<Author> authors = authorService.findAll();
+
+		if (authors.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(authors, HttpStatus.OK);
+	}
+
+	@GetMapping("/authors/{id}")
+	public ResponseEntity<Author> getAuthor(@PathVariable int id) throws AuthorNotFoundException {
+		Author author = authorService.findById(id);
+
+		if (author == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(author, HttpStatus.OK);
+	}
+
+	// TODO - getBooksByAuthorId (@Mappings, URI, and method)
+
+	@PostMapping("/authors")
+	public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
+		Author nAuthor = authorService.saveAuthor(author);
+		return new ResponseEntity<>(nAuthor, HttpStatus.CREATED);
+	}
+
+	@PutMapping("/authors/{id}")
+	public ResponseEntity<Author> updateAuthor(@RequestBody Author author) {
+		authorService.findById(author.getAuthorId()); // Will catch exception if not found
+		Author uAuthor = authorService.saveAuthor(author);
+		return new ResponseEntity<>(uAuthor, HttpStatus.OK);
+	}
 
 }

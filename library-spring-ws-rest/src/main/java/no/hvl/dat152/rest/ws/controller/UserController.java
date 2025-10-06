@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import no.hvl.dat152.rest.ws.exceptions.BookNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
+import no.hvl.dat152.rest.ws.model.Book;
 import no.hvl.dat152.rest.ws.model.Order;
 import no.hvl.dat152.rest.ws.model.User;
 import no.hvl.dat152.rest.ws.service.UserService;
@@ -35,41 +37,96 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@GetMapping("/users")
-	public ResponseEntity<Object> getUsers(){
-		
+	public ResponseEntity<Object> getUsers() {
+
 		List<User> users = userService.findAllUsers();
-		
-		if(users.isEmpty())
-			
+
+		if (users.isEmpty())
+
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		else
 			return new ResponseEntity<>(users, HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value = "/users/{id}")
-	public ResponseEntity<Object> getUser(@PathVariable Long id) throws UserNotFoundException, OrderNotFoundException{
-		
-		User user = userService.findUser(id);
-		
-		return new ResponseEntity<>(user, HttpStatus.OK);	
-		
+	public ResponseEntity<Object> getUser(@PathVariable String id)
+			throws UserNotFoundException, OrderNotFoundException {
+
+		User user = userService.findUser(Long.parseLong(id));
+
+		return new ResponseEntity<>(user, HttpStatus.OK);
+
 	}
-	
-	// TODO - createUser (@Mappings, URI=/users, and method)
 
-	// TODO - updateUser (@Mappings, URI, and method)
-	
-	// TODO - deleteUser (@Mappings, URI, and method)
+	@PostMapping("/users")
+	public ResponseEntity<User> createUser(@RequestBody User user) {
+		User nUser = userService.saveUser(user);
 
-	// TODO - getUserOrders (@Mappings, URI=/users/{id}/orders, and method)
-	
-	// TODO - getUserOrder (@Mappings, URI=/users/{uid}/orders/{oid}, and method)
+		return new ResponseEntity<>(nUser, HttpStatus.CREATED);
+	}
 
-	// TODO - deleteUserOrder (@Mappings, URI, and method)
-	
-	// TODO - createUserOrder (@Mappings, URI, and method) + HATEOAS links
+	@PutMapping("/users/{id}")
+	public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user)
+			throws UserNotFoundException {
+		userService.findUser(Long.parseLong(id)); // Will catch exception if not found
+		User uUser = userService.saveUser(user);
 
-	
+		return new ResponseEntity<>(uUser, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/users/{id}")
+	public ResponseEntity<Void> deleteUser(@PathVariable String id) throws UserNotFoundException {
+		Long lId = Long.parseLong(id);
+		userService.findUser(lId); // Will catch exception if not found
+		userService.deleteUser(lId);
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/users/{id}/orders")
+	public ResponseEntity<Object> getUserOrders(@PathVariable String id)
+			throws UserNotFoundException, OrderNotFoundException {
+
+		Set<Order> orders = userService.getUserOrders(Long.parseLong(id));
+
+		return new ResponseEntity<>(orders, HttpStatus.OK);
+
+	}
+
+	@GetMapping(value = "/users/{uid}/orders/{oid}")
+	public ResponseEntity<Order> getUserOrder(@PathVariable String uid, @PathVariable String oid)
+			throws UserNotFoundException {
+
+		Order order = userService.getUserOrder(Long.parseLong(uid), Long.parseLong(oid));
+
+		return new ResponseEntity<>(order, HttpStatus.OK);
+	}
+
+	@DeleteMapping(value = "/users/{uid}/orders/{oid}")
+	public ResponseEntity<Order> deleteUserOrder(@PathVariable String uid, @PathVariable String oid)
+			throws NumberFormatException, UserNotFoundException {
+
+		Long lUid = Long.parseLong(uid);
+
+		userService.findUser(lUid); // Will catch exception if not found
+		userService.deleteOrderForUser(lUid, Long.parseLong(oid));
+
+		return new ResponseEntity<>(HttpStatus.OK);
+
+	}
+
+	// TODO - HATEOAS links
+	@PostMapping(value = "/users/{uid}/orders")
+	public ResponseEntity<User> createUserOrder(@PathVariable String uid, @RequestBody Order order)
+			throws UserNotFoundException {
+
+		Long lUid = Long.parseLong(uid);
+
+		User user = userService.createOrdersForUser(lUid, order);
+
+		return new ResponseEntity<>(user, HttpStatus.OK);
+
+	}
 }
