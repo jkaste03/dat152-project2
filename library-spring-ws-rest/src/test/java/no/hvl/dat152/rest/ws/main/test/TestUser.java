@@ -119,13 +119,6 @@ class TestUser {
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.body(order)
 				.post(API_ROOT + "/users/{id}/orders", "2");
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println(response.getBody().asPrettyString());
-		System.out.println();
-		System.out.println();
-		System.out.println();
 
 		List<Object> isbns = response.jsonPath().getList("isbn");
 		List<Object> hrefs = response.jsonPath().getList("links");
