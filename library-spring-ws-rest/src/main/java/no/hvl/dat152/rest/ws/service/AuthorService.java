@@ -3,11 +3,14 @@
  */
 package no.hvl.dat152.rest.ws.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import no.hvl.dat152.rest.ws.exceptions.AuthorNotFoundException;
 import no.hvl.dat152.rest.ws.model.Author;
@@ -22,27 +25,69 @@ public class AuthorService {
 
 	@Autowired
 	private AuthorRepository authorRepository;
-		
-	
+
 	public Author findById(long id) throws AuthorNotFoundException {
-		
+
 		Author author = authorRepository.findById(id)
-				.orElseThrow(()-> new AuthorNotFoundException("Author with the id: "+id+ "not found!"));
-		
+				.orElseThrow(() -> new AuthorNotFoundException("Author with the id: " + id + "not found!"));
+
 		return author;
 	}
-	
-	// TODO public saveAuthor(Author author)
-		
-	
-	// TODO public Author updateAuthor(Author author, int id)
-		
-	
-	// TODO public List<Author> findAll()
-	
-	
-	// TODO public void deleteById(Long id) throws AuthorNotFoundException 
 
-	
+	public List<Author> findAll() {
+		return (List<Author>) authorRepository.findAll();
+	}
+
+	public Author saveAuthor(Author author) {
+		return authorRepository.save(author);
+	}
+
+	@Transactional
+	public Author updateAuthor(Author author) throws Exception {
+		Optional<Author> optionalAuthor = authorRepository.findById(author.getAuthorId());
+
+		if (optionalAuthor.isEmpty()) {
+			throw new Exception("Author with id = " + author.getAuthorId() + " not found!");
+		}
+
+		Author existingAuthor = optionalAuthor.get();
+		existingAuthor.setFirstname(author.getFirstname());
+		existingAuthor.setLastname(author.getLastname());
+		existingAuthor.setBooks(author.getBooks());
+
+		return authorRepository.save(existingAuthor);
+	}
+
+	@Transactional
+	public void deleteById(Integer id) {
+		Author author = authorRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Author with id = " + id + " not found"));
+
+		// Need to remove the author from all the books that has him as an author
+		var booksCopy = new java.util.HashSet<>(author.getBooks());
+		for (var book : booksCopy) {
+			book.getAuthors().remove(author); // owning side change
+		}
+		author.getBooks().clear(); // inverse side clear
+
+		authorRepository.delete(author);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Book> getBooksByAuthorId(Integer id) throws Exception {
+		Author author = authorRepository.findById(id)
+				.orElseThrow(() -> new Exception("Author with id = " + id + " not found"));
+
+		return new ArrayList<>(author.getBooks());
+	}
+
+	// TODO public saveAuthor(Author author)
+
+	// TODO public Author updateAuthor(Author author, int id)
+
+	// TODO public List<Author> findAll()
+
+	// TODO public void deleteById(Long id) throws AuthorNotFoundException
+
 	// TODO public Set<Book> findBooksByAuthorId(Long id)
 }
