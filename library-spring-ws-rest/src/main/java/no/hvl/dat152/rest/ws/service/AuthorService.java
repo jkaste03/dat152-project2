@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.AuthorNotFoundException;
 import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Book;
@@ -26,7 +27,7 @@ public class AuthorService {
 	@Autowired
 	private AuthorRepository authorRepository;
 
-	public Author findById(long id) throws AuthorNotFoundException {
+	public Author findById(Integer id) throws AuthorNotFoundException {
 
 		Author author = authorRepository.findById(id)
 				.orElseThrow(() -> new AuthorNotFoundException("Author with the id: " + id + "not found!"));
@@ -80,14 +81,6 @@ public class AuthorService {
 
 		return new ArrayList<>(author.getBooks());
 	}
-
-	// TODO public saveAuthor(Author author)
-
-	// TODO public Author updateAuthor(Author author, int id)
-
-	// TODO public List<Author> findAll()
-
-	// TODO public void deleteById(Long id) throws AuthorNotFoundException
 
 	// TODO public Set<Book> findBooksByAuthorId(Long id)
 }
