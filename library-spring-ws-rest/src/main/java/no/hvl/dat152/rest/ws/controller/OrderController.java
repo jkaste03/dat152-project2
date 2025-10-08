@@ -61,10 +61,10 @@ public class OrderController {
 		return new ResponseEntity<>(updated_order, HttpStatus.OK);
 	}
 
-	// TODO - deleteBookOrder (@Mappings, URI=/orders/{id}, and method)
 	@DeleteMapping("/orders/{id}")
-	public ResponseEntity<String> delteBookOrder(@PathVariable Long id) throws OrderNotFoundException {
+	public ResponseEntity<Void> delteBookOrder(@PathVariable Long id) throws OrderNotFoundException {
 		orderService.deleteOrder(id);
-		return new ResponseEntity<>("", HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
+
 }

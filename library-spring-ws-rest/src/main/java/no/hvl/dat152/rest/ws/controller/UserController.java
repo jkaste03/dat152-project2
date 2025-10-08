@@ -53,11 +53,8 @@ public class UserController {
 
 	@GetMapping(value = "/users/{id}")
 	public ResponseEntity<Object> getUser(@PathVariable Long id) throws UserNotFoundException, OrderNotFoundException {
-
 		User user = userService.findUser(id);
-
 		return new ResponseEntity<>(user, HttpStatus.OK);
-
 	}
 
 	@PostMapping("/users")
@@ -73,7 +70,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/users/{id}")
-	public ResponseEntity<String> deleteUser(@PathVariable Long id) throws UserNotFoundException {
+	public ResponseEntity<Void> deleteUser(@PathVariable Long id) throws UserNotFoundException {
 		userService.deleteUser(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -92,10 +89,10 @@ public class UserController {
 	}
 
 	@DeleteMapping("/users/{uid}/orders/{oid}")
-	public ResponseEntity<String> deleteUserOrder(@PathVariable Long uid, @PathVariable Long oid)
+	public ResponseEntity<Void> deleteUserOrder(@PathVariable Long uid, @PathVariable Long oid)
 			throws UserNotFoundException, OrderNotFoundException {
 		userService.deleteOrderForUser(uid, oid);
-		return new ResponseEntity<>("", HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PostMapping("/users/{id}/orders")

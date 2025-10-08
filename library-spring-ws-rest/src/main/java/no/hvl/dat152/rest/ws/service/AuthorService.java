@@ -52,14 +52,12 @@ public class AuthorService {
 	}
 
 	public void deleteById(Long id) throws AuthorNotFoundException {
-		Optional<Author> authorOpt = authorRepository.findById(id);
-		Author author = authorOpt.orElseThrow(() -> new AuthorNotFoundException("Author not found for id " + id));
+		Author author = findById(id);
 		authorRepository.delete(author);
 	}
 
 	public Set<Book> findBooksByAuthorId(Long id) throws AuthorNotFoundException {
-		Author author = authorRepository.findById(id)
-				.orElseThrow(() -> new AuthorNotFoundException("Author not found for id " + id));
+		Author author = findById(id);
 		return author.getBooks();
 	}
 }

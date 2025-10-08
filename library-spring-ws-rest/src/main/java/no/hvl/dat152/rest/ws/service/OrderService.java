@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
 import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
@@ -26,10 +27,7 @@ public class OrderService {
 	private OrderRepository orderRepository;
 
 	public Order saveOrder(Order order) {
-
-		order = orderRepository.save(order);
-
-		return order;
+		return orderRepository.save(order);
 	}
 
 	public Order findOrder(Long id) throws OrderNotFoundException {
@@ -37,12 +35,12 @@ public class OrderService {
 		Order order = orderRepository.findById(id)
 				.orElseThrow(
 						() -> new OrderNotFoundException("Order with id: " + id + " not found in the order list!"));
-
+		order.add(Link.of("/orders/" + order.getId()));
 		return order;
 	}
 
 	public void deleteOrder(Long id) throws OrderNotFoundException {
-		Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException("Order not found"));
+		Order order = findOrder(id);
 		orderRepository.delete(order);
 	}
 
