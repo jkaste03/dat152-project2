@@ -30,6 +30,7 @@ import no.hvl.dat152.rest.ws.exceptions.UpdateBookFailedException;
 import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Book;
 import no.hvl.dat152.rest.ws.service.BookService;
+import no.hvl.dat152.rest.ws.service.AuthorService;
 
 /**
  * @author tdoy
@@ -95,9 +96,26 @@ public class BookController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
+
+	@GetMapping("/books/{isbn}/authors")
+	public ResponseEntity<List<Author>> getAuthorsOfBookByISBN(@PathVariable String isbn) {
+		try {
+			List<Author> authors = bookService.getAuthorsOfBookByISBN(isbn);
+
+			if (authors.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+
+			return new ResponseEntity<>(authors, HttpStatus.OK);
+		} catch (BookNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
-	// TODO - getAuthorsOfBookByISBN (@Mappings, URI, and method)
-	
-	// TODO - updateBookByISBN (@Mappings, URI, and method)
-	
-	// TODO - deleteBookByISBN (@Mappings, URI, and method)
+// TODO - getAuthorsOfBookByISBN (@Mappings, URI, and method)
+
+// TODO - updateBookByISBN (@Mappings, URI, and method)
+
+// TODO - deleteBookByISBN (@Mappings, URI, and method)
