@@ -65,7 +65,7 @@ class BookRepositoryTest {
 	@Test
 	final void testFindBookByIsbn() {
 		
-		Book book = bookRepo.findBookByISBN("ghijk1234");
+		Book book = bookRepo.findBookByIsbn("ghijk1234");
 		System.out.println(book);
 		
 		assertTrue(book.getIsbn().equals("ghijk1234"));
