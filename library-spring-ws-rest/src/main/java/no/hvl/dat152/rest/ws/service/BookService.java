@@ -39,11 +39,11 @@ public class BookService {
 
 	}
 
-	public Book findByISBN(String isbn) throws BookNotFoundException {
+	public Book findByIsbn(String isbn) throws BookNotFoundException {
 
 		Book book = null;
 		try {
-			book = bookRepository.findBookByISBN(isbn);
+			book = bookRepository.findBookByIsbn(isbn);
 		} catch (Exception e) {
 			throw new BookNotFoundException("Book with isbn = " + isbn + " not found!");
 		}
@@ -55,7 +55,7 @@ public class BookService {
 	}
 
 	public Book updateBook(Book bookDetails) throws BookNotFoundException {
-		Book existing = bookRepository.findBookByISBN(bookDetails.getIsbn());
+		Book existing = bookRepository.findBookByIsbn(bookDetails.getIsbn());
 
 		if (existing == null) {
 			throw new BookNotFoundException("Book with isbn = " + bookDetails.getIsbn() + " not found!");
@@ -67,14 +67,14 @@ public class BookService {
 		return bookRepository.save(existing);
 	}
 
-	public void deleteByISBN(String isbn) throws BookNotFoundException {
-		if (!bookRepository.existsByISBN(isbn)) {
+	public void deleteByIsbn(String isbn) throws BookNotFoundException {
+		if (!bookRepository.existsByIsbn(isbn)) {
 			throw new BookNotFoundException("Book with isbn = " + isbn + " not found!");
 		}
-		bookRepository.deleteByISBN(isbn);
+		bookRepository.deleteByIsbn(isbn);
 	}
 
-	// public List<Author> getAuthorsOfBookByISBN(String isbn) {
+	// public List<Author> getAuthorsOfBookByIsbn(String isbn) {
 	// return authorService.findAll().stream()
 	// .filter(author -> author.getBooks().stream()
 	// .anyMatch(book -> isbn.equals(book.getIsbn())))
@@ -82,16 +82,16 @@ public class BookService {
 	// }
 
 	@Transactional(readOnly = true)
-	public List<Author> getAuthorsOfBookByISBN(String isbn) throws BookNotFoundException {
+	public List<Author> getAuthorsOfBookByIsbn(String isbn) throws BookNotFoundException {
 		Book book = bookRepository.findByIsbn(isbn)
-				.orElseThrow(() -> new BookNotFoundException("Book with ISBN = " + isbn + " not found"));
+				.orElseThrow(() -> new BookNotFoundException("Book with isbn = " + isbn + " not found"));
 
 		return new ArrayList<>(book.getAuthors());
 	}
 
 	// trying out springs "deleteByX"
 	public void deleteById(long id) throws BookNotFoundException {
-		if (!bookRepository.existById(id)) {
+		if (!bookRepository.existsById(id)) {
 			throw new BookNotFoundException("Book with id = " + id + " not found!");
 		}
 		bookRepository.deleteById(id);
@@ -102,6 +102,6 @@ public class BookService {
 
 	// TODO public void deleteById(long id) - kanskje ferdig?
 
-	// TODO public void deleteByISBN(String isbn) - kanskje ferdig
+	// TODO public void deleteByIsbn(String isbn) - kanskje ferdig
 
 }
