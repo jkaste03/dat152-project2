@@ -27,6 +27,7 @@ import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
 import no.hvl.dat152.rest.ws.model.Order;
 import no.hvl.dat152.rest.ws.model.User;
 import no.hvl.dat152.rest.ws.service.UserService;
+import no.hvl.dat152.rest.ws.service.OrderService;
 
 /**
  * @author tdoy
@@ -73,16 +74,46 @@ public class UserController {
 		return ResponseEntity.ok(updatedUser);
 	}
 
-	// TODO - updateUser (@Mappings, URI, and method)
+	@DeleteMapping("/users/{uid}")
+	public ResponseEntity<User> deleteUser(@PathVariable Long uid)
+			throws UserNotFoundException {
+		userService.findUser(uid);
+		userService.deleteUser(uid);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
 
-	// TODO - deleteUser (@Mappings, URI, and method)
+	@GetMapping("/users/{id}/orders")
+	public ResponseEntity<List<Order>> getUserOrders(@PathVariable Long uid)
+			throws UserNotFoundException, OrderNotFoundException {
+		userService.findUser(uid);
+		userService.getUserOrders(uid);
+		return new ResponseEntity<>(HttpStatus.OK);
 
-	// TODO - getUserOrders (@Mappings, URI=/users/{id}/orders, and method)
+	}
 
-	// TODO - getUserOrder (@Mappings, URI=/users/{uid}/orders/{oid}, and method)
+	@GetMapping("/users/{uid}/orders/{oid}")
+	public ResponseEntity<Order> getUserOrder(@PathVariable Long uid, Long oid)
+			throws UserNotFoundException, OrderNotFoundException {
+		userService.findUser(uid);
+		userService.getUserOrder(uid, oid);
 
-	// TODO - deleteUserOrder (@Mappings, URI, and method)
+		return new ResponseEntity<>(HttpStatus.OK);
 
-	// TODO - createUserOrder (@Mappings, URI, and method) + HATEOAS links
+	}
 
+	@DeleteMapping("/user/{uid}/orders/{oid}")
+	public ResponseEntity<Order> deleteUserOrder(@PathVariable Long uid, Long oid)
+			throws UserNotFoundException, OrderNotFoundException {
+		userService.findUser(uid);
+		userService.deleteOrderForUser(uid, oid);
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/users/{uid}/orders")
+	public ResponseEntity<User> createUserOrder(@PathVariable Long uid, @RequestBody Order order)
+			throws UserNotFoundException {
+		User user = userService.createOrdersForUser(uid, order);
+		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
 }
