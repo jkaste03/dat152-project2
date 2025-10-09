@@ -3,16 +3,10 @@
  */
 package no.hvl.dat152.rest.ws.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,15 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import no.hvl.dat152.rest.ws.exceptions.BookNotFoundException;
-import no.hvl.dat152.rest.ws.exceptions.UpdateBookFailedException;
 import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Book;
 import no.hvl.dat152.rest.ws.service.BookService;
-import no.hvl.dat152.rest.ws.service.AuthorService;
 
 /**
  * @author tdoy
@@ -73,7 +64,7 @@ public class BookController {
 	}
 
 	@PutMapping("/books/{isbn}")
-	public ResponseEntity<Book> updateBook(@PathVariable String isbn,
+	public ResponseEntity<Book> updateBookByIsbn(@PathVariable String isbn,
 			@RequestBody Book bookDetails) {
 		try {
 			bookDetails.setIsbn(isbn);
@@ -88,7 +79,7 @@ public class BookController {
 
 	@Transactional
 	@DeleteMapping("/books/{isbn}")
-	public ResponseEntity<Void> deleteBook(@PathVariable String isbn) {
+	public ResponseEntity<Void> deleteBookByIsbn(@PathVariable String isbn) {
 		try {
 			bookService.deleteByIsbn(isbn);
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -114,8 +105,3 @@ public class BookController {
 		}
 	}
 }
-// TODO - getAuthorsOfBookByIsbn (@Mappings, URI, and method)
-
-// TODO - updateBookByIsbn (@Mappings, URI, and method)
-
-// TODO - deleteBookByIsbn (@Mappings, URI, and method)

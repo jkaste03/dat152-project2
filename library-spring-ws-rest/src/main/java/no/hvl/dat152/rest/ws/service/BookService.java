@@ -89,7 +89,6 @@ public class BookService {
 		return new ArrayList<>(book.getAuthors());
 	}
 
-	// trying out springs "deleteByX"
 	public void deleteById(long id) throws BookNotFoundException {
 		if (!bookRepository.existsById(id)) {
 			throw new BookNotFoundException("Book with id = " + id + " not found!");
@@ -99,9 +98,5 @@ public class BookService {
 
 
 	// TODO public List<Book> findAllPaginate(Pageable page)
-
-	// TODO public void deleteById(long id) - kanskje ferdig?
-
-	// TODO public void deleteByIsbn(String isbn) - kanskje ferdig
 
 }
