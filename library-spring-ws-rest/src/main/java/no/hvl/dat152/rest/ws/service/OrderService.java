@@ -4,7 +4,7 @@
 package no.hvl.dat152.rest.ws.service;
 
 import java.util.List;
-
+import java.util.Optional;
 import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,9 +56,25 @@ public class OrderService {
 		return allOrders;
 	}
 
+	public List<Order> findByExpiryDate(LocalDate expiry, Pageable page) throws NoOrdersFoundException {
+		Page<Order> orderPage = orderRepository.findByExpiryBefore(expiry, page);
+		List<Order> orders = orderPage.getContent();
 
-	// TODO public List<Order> findByExpiryDate(LocalDate expiry, Pageable page)
+		if (orders.isEmpty()) {
+			throw new NoOrdersFoundException("No orders found before " + expiry);
+		}
 
-	// TODO public Order updateOrder(Order order, Long id)
+		return orders;
+	}
 
+	public Order updateOrder(Order order, Long id) throws OrderNotFoundException {
+
+		Order existing = orderRepository.findById(id)
+				.orElseThrow(() -> new OrderNotFoundException("Order with id: " + id + " not found in the order list!"));
+
+		existing.setIsbn(order.getIsbn());
+		existing.setExpiry(order.getExpiry());
+
+		return orderRepository.save(existing);
+	}
 }
