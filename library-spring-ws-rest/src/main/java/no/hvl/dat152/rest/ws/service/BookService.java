@@ -68,10 +68,10 @@ public class BookService {
 	}
 
 	public void deleteByISBN(String isbn) throws BookNotFoundException {
-		if (!bookRepository.existsByIsbn(isbn)) {
+		if (!bookRepository.existsByISBN(isbn)) {
 			throw new BookNotFoundException("Book with isbn = " + isbn + " not found!");
 		}
-		bookRepository.deleteByIsbn(isbn);
+		bookRepository.deleteByISBN(isbn);
 	}
 
 	// public List<Author> getAuthorsOfBookByISBN(String isbn) {
@@ -82,7 +82,7 @@ public class BookService {
 	// }
 
 	@Transactional(readOnly = true)
-	public List<Author> findAuthorsOfBookByISBN(String isbn) throws BookNotFoundException {
+	public List<Author> getAuthorsOfBookByISBN(String isbn) throws BookNotFoundException {
 		Book book = bookRepository.findByIsbn(isbn)
 				.orElseThrow(() -> new BookNotFoundException("Book with ISBN = " + isbn + " not found"));
 
@@ -90,11 +90,11 @@ public class BookService {
 	}
 
 	// trying out springs "deleteByX"
-	public void deleteByID(long id) throws BookNotFoundException {
-		if (!bookRepository.existByID(id)) {
+	public void deleteById(long id) throws BookNotFoundException {
+		if (!bookRepository.existById(id)) {
 			throw new BookNotFoundException("Book with id = " + id + " not found!");
 		}
-		bookRepository.deleteByID(id);
+		bookRepository.deleteById(id);
 	}
 
 

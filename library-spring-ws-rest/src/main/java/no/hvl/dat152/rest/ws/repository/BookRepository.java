@@ -22,10 +22,11 @@ import no.hvl.dat152.rest.ws.model.Book;
  */
 public interface BookRepository extends CrudRepository<Book, Long>, PagingAndSortingRepository<Book, Long> {
 	
-	boolean existsByIsbn(String isbn);
-	void deleteByIsbn(String isbn);
-	boolean existByID(long id);
-	void deleteByID(long id);
+	boolean existsByISBN(String isbn);
+	void deleteByISBN(String isbn);
+	boolean existById(long id);
+	void deleteById(long id);
+  Optional<Book> findByIsbn(String isbn);
 
 	Optional<Book> findByIsbn(String isbn);
 	
