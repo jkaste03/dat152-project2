@@ -6,6 +6,8 @@ package no.hvl.dat152.rest.ws.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,7 +98,10 @@ public class BookService {
 		bookRepository.deleteById(id);
 	}
 
-
-	// TODO public List<Book> findAllPaginate(Pageable page)
+	@Transactional(readOnly = true)
+	public List<Book> findAllPaginate(Pageable page) {
+		Page<Book> bookPage = bookRepository.findAll(page);
+		return bookPage.getContent();
+	}
 
 }
