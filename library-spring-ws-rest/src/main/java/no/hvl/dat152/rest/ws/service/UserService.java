@@ -11,12 +11,12 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
-import no.hvl.dat152.rest.ws.model.User;
 import no.hvl.dat152.rest.ws.model.Order;
+import no.hvl.dat152.rest.ws.model.User;
+import no.hvl.dat152.rest.ws.repository.OrderRepository;
 import no.hvl.dat152.rest.ws.repository.UserRepository;
 
 /**
@@ -27,6 +27,9 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private OrderRepository OrderRepository;
 
 	public List<User> findAllUsers() {
 
@@ -75,7 +78,7 @@ public class UserService {
 	}
 
 	public Order getUserOrder(Long userid, Long oid) {
-		User user = userRepository.findById(oid)
+		User user = userRepository.findById(userid)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
 		Order order = user.getOrders().stream()
@@ -86,7 +89,23 @@ public class UserService {
 		return order;
 	}
 
-	// TODO public void deleteOrderForUser(Long userid, Long oid)
+	public void deleteOrderForUser(Long userid, Long oid) {
+		User user = userRepository.findById(userid)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-	// TODO public User createOrdersForUser(Long userid, Order order)
+		Order order = user.getOrders().stream()
+				.filter(o -> o.getId().equals(oid))
+				.findFirst()
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+
+		OrderRepository.delete(order);
+	}
+
+	public User createOrdersForUser(Long userid, Order order) {
+		User user = userRepository.findById(userid)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+		user.addOrder(order);
+		return user;
+	}
 }
