@@ -4,13 +4,16 @@
 package no.hvl.dat152.rest.ws.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.persistence.EntityNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.AuthorNotFoundException;
@@ -81,5 +84,13 @@ public class AuthorService {
 		return new ArrayList<>(author.getBooks());
 	}
 
-	// TODO public Set<Book> findBooksByAuthorId(Long id)
+	@Transactional(readOnly = true)
+	public Set<Book> findBooksByAuthorId(Integer id) {
+			Author author = authorRepository.findById(id)
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found"));
+			return new HashSet<>(author.getBooks());
+	}
+	// Kan også ha dette i bookrepository:
+  // Set<Book> findDistinctByAuthors_AuthorId(int authorId);
+
 }
