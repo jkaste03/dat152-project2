@@ -3,14 +3,20 @@
  */
 package no.hvl.dat152.rest.ws.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
 import no.hvl.dat152.rest.ws.model.User;
+import no.hvl.dat152.rest.ws.model.Order;
 import no.hvl.dat152.rest.ws.repository.UserRepository;
 
 /**
@@ -62,11 +68,25 @@ public class UserService {
 		return userRepository.save(existingUser);
 	}
 
-	// TODO public Set<Order> getUserOrders(Long userid) 
-	
-	// TODO public Order getUserOrder(Long userid, Long oid)
-	
+	public Set<Order> getUserOrders(Long id) {
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+		return new HashSet<>(user.getOrders());
+	}
+
+	public Order getUserOrder(Long userid, Long oid) {
+		User user = userRepository.findById(oid)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+		Order order = user.getOrders().stream()
+				.filter(o -> o.getId().equals(oid))
+				.findFirst()
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+
+		return order;
+	}
+
 	// TODO public void deleteOrderForUser(Long userid, Long oid)
-	
+
 	// TODO public User createOrdersForUser(Long userid, Order order)
 }
