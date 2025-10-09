@@ -24,6 +24,8 @@ public interface BookRepository extends CrudRepository<Book, Long>, PagingAndSor
 	
 	boolean existsByIsbn(String isbn);
 	void deleteByIsbn(String isbn);
+	boolean existByID(long id);
+	void deleteByID(long id);
 
 	Optional<Book> findByIsbn(String isbn);
 	

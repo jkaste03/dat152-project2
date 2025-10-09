@@ -64,12 +64,11 @@ public class AuthorService {
 		Author author = authorRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Author with id = " + id + " not found"));
 
-		// Need to remove the author from all the books that has him as an author
 		var booksCopy = new java.util.HashSet<>(author.getBooks());
 		for (var book : booksCopy) {
-			book.getAuthors().remove(author); // owning side change
+			book.getAuthors().remove(author);
 		}
-		author.getBooks().clear(); // inverse side clear
+		author.getBooks().clear();
 
 		authorRepository.delete(author);
 	}

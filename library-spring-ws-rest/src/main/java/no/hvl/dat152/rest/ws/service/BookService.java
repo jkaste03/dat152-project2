@@ -5,16 +5,12 @@ package no.hvl.dat152.rest.ws.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import no.hvl.dat152.rest.ws.exceptions.BookNotFoundException;
-import no.hvl.dat152.rest.ws.exceptions.UpdateBookFailedException;
 import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Book;
 import no.hvl.dat152.rest.ws.repository.BookRepository;
@@ -79,10 +75,10 @@ public class BookService {
 	}
 
 	// public List<Author> getAuthorsOfBookByISBN(String isbn) {
-	// 	return authorService.findAll().stream()
-	// 			.filter(author -> author.getBooks().stream()
-	// 					.anyMatch(book -> isbn.equals(book.getIsbn())))
-	// 			.toList();
+	// return authorService.findAll().stream()
+	// .filter(author -> author.getBooks().stream()
+	// .anyMatch(book -> isbn.equals(book.getIsbn())))
+	// .toList();
 	// }
 
 	@Transactional(readOnly = true)
@@ -93,10 +89,19 @@ public class BookService {
 		return new ArrayList<>(book.getAuthors());
 	}
 
+	// trying out springs "deleteByX"
+	public void deleteByID(long id) throws BookNotFoundException {
+		if (!bookRepository.existByID(id)) {
+			throw new BookNotFoundException("Book with id = " + id + " not found!");
+		}
+		bookRepository.deleteByID(id);
+	}
+
+
 	// TODO public List<Book> findAllPaginate(Pageable page)
 
-	// TODO public void deleteById(long id)
+	// TODO public void deleteById(long id) - kanskje ferdig?
 
-	// TODO public void deleteByISBN(String isbn)
+	// TODO public void deleteByISBN(String isbn) - kanskje ferdig
 
 }
