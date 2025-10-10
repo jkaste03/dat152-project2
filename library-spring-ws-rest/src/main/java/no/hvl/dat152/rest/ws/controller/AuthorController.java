@@ -60,7 +60,7 @@ public class AuthorController {
 	}
 
 	@GetMapping("authors/{id}/books")
-	public ResponseEntity<Object> getBooksByAuthorId(@PathVariable int id) {
+	public ResponseEntity<Object> getBooksByAuthorId(@PathVariable int id) throws AuthorNotFoundException {
 		Author author = authorService.findById(id);
 		if (author == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -77,7 +77,7 @@ public class AuthorController {
 	}
 
 	@PutMapping("/authors/{id}")
-	public ResponseEntity<Author> updateAuthor(@RequestBody Author author) {
+	public ResponseEntity<Author> updateAuthor(@RequestBody Author author) throws AuthorNotFoundException {
 		authorService.findById(author.getAuthorId()); // Will catch exception if not found
 		Author uAuthor = authorService.saveAuthor(author);
 		return new ResponseEntity<>(uAuthor, HttpStatus.OK);

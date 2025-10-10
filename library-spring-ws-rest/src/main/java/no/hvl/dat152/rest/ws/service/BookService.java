@@ -57,11 +57,19 @@ public class BookService {
 		bookRepository.delete(findByISBN(isbn));
 	}
 
-	// TODO public Book updateBook(Book book, String isbn)
+	public Book updateBook(Book book, String isbn) {
+		bookRepository.findBookByISBN(isbn);
+		return bookRepository.save(book);
+	}
 
-	// TODO public List<Book> findAllPaginate(Pageable page)
+	public List<Book> findAllPaginate(Pageable page) {
+		return bookRepository.findAllPaginate(page.getPageSize(), (int) page.getOffset());
+	}
 
-	// TODO public Set<Author> findAuthorsOfBookByISBN(String isbn)
+	public Set<Author> findAuthorsOfBookByISBN(String isbn) throws BookNotFoundException {
+		Book book = findByISBN(isbn);
+		return book.getAuthors();
+	}
 
 	public void deleteById(long id) {
 		Book book = null;

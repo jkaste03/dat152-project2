@@ -54,13 +54,8 @@ public class UserService {
 	}
 
 	public User updateUser(User user, Long id) throws UserNotFoundException {
-		User existing = findUser(id);
-
-		existing.setFirstname(user.getFirstname());
-		existing.setLastname(user.getLastname());
-		existing.setOrders(user.getOrders());
-
-		User uUser = saveUser(existing);
+		findUser(id);
+		User uUser = saveUser(user);
 
 		return uUser;
 	}
@@ -75,8 +70,8 @@ public class UserService {
 	}
 
 	public void deleteOrderForUser(Long userid, Long oid) throws UserNotFoundException, OrderNotFoundException {
-		Order order = getUserOrder(userid, oid);
-		orderService.deleteOrder(order.getId());
+		getUserOrder(userid, oid);
+		orderService.deleteOrder(userid);
 	}
 
 	public User createOrdersForUser(Long userid, Order order) throws UserNotFoundException {

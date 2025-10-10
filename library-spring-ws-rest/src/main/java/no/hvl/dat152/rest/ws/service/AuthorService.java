@@ -27,24 +27,28 @@ public class AuthorService {
 		return authorRepository.save(author);
 	}
 
-	public Author findById(int id) {
-		Author author = null;
-		try {
-			author = authorRepository.findById(id)
-					.orElseThrow(() -> new AuthorNotFoundException("Author with id " + id + " does not exist"));
-		} catch (AuthorNotFoundException e) {
-			e.printStackTrace();
-		}
+	public Author findById(int id) throws AuthorNotFoundException {
+		Author author = authorRepository.findById(id)
+				.orElseThrow(() -> new AuthorNotFoundException("Author with id " + id + " does not exist"));
 		return author;
 	}
 
-	// TODO public Author updateAuthor(Author author, int id)
+	public Author updateAuthor(Author author, int id) {
+		authorRepository.findById(id);
+		return authorRepository.save(author);
+	}
 
 	public List<Author> findAll() {
 		return (List<Author>) authorRepository.findAll();
 	}
 
-	// TODO public void deleteById(Long id) throws AuthorNotFoundException
+	public void deleteById(int id) throws AuthorNotFoundException {
+		Author author = findById(id);
+		authorRepository.delete(author);
+	}
 
-	// TODO public Set<Book> findBooksByAuthorId(Long id)
+	public Set<Book> findBooksByAuthorId(int id) throws AuthorNotFoundException {
+		Author author = findById(id);
+		return author.getBooks();
+	}
 }

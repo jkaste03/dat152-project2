@@ -20,12 +20,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import no.hvl.dat152.rest.ws.controller.hateoas.OrderLinkAdder;
 import no.hvl.dat152.rest.ws.exceptions.BookNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
 import no.hvl.dat152.rest.ws.model.Book;
 import no.hvl.dat152.rest.ws.model.Order;
 import no.hvl.dat152.rest.ws.model.User;
+import no.hvl.dat152.rest.ws.service.OrderService;
 import no.hvl.dat152.rest.ws.service.UserService;
 
 /**
@@ -37,6 +39,14 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+
+	private final OrderLinkAdder orderLinkAdder;
+	private final OrderService orderService;
+
+	public UserController(OrderLinkAdder userLinkAdder, OrderService orderService) {
+		this.orderLinkAdder = userLinkAdder;
+		this.orderService = orderService;
+	}
 
 	@GetMapping("/users")
 	public ResponseEntity<Object> getUsers() {
@@ -51,10 +61,10 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/users/{id}")
-	public ResponseEntity<Object> getUser(@PathVariable String id)
-			throws UserNotFoundException, OrderNotFoundException {
+	public ResponseEntity<Object> getUser(@PathVariable long id)
+			throws UserNotFoundException {
 
-		User user = userService.findUser(Long.parseLong(id));
+		User user = userService.findUser(id);
 
 		return new ResponseEntity<>(user, HttpStatus.OK);
 
@@ -68,10 +78,10 @@ public class UserController {
 	}
 
 	@PutMapping("/users/{id}")
-	public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user)
+	public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user)
 			throws UserNotFoundException {
-		userService.findUser(Long.parseLong(id)); // Will catch exception if not found
-		User uUser = userService.saveUser(user);
+		userService.findUser(id); // Will catch exception if not found
+		User uUser = userService.updateUser(user, id);
 
 		return new ResponseEntity<>(uUser, HttpStatus.OK);
 	}
@@ -117,16 +127,15 @@ public class UserController {
 
 	}
 
-	// TODO - HATEOAS links
 	@PostMapping(value = "/users/{uid}/orders")
-	public ResponseEntity<User> createUserOrder(@PathVariable String uid, @RequestBody Order order)
-			throws UserNotFoundException {
+	public ResponseEntity<Object> createUserOrder(@PathVariable long uid, @RequestBody Order order)
+			throws UserNotFoundException, OrderNotFoundException {
 
-		Long lUid = Long.parseLong(uid);
+		User user = userService.createOrdersForUser(uid, order);
+		Set<Order> orders = user.getOrders();
 
-		User user = userService.createOrdersForUser(lUid, order);
+		orderLinkAdder.addLinks(orders);
 
-		return new ResponseEntity<>(user, HttpStatus.CREATED);
-
+		return new ResponseEntity<>(orders, HttpStatus.CREATED);
 	}
 }
