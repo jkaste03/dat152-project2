@@ -74,7 +74,7 @@ public class UserService {
 		return getUserOrders(userid).stream().filter(o -> o.getId() == oid).findAny().orElse(null);
 	}
 
-	public void deleteOrderForUser(Long userid, Long oid) throws UserNotFoundException {
+	public void deleteOrderForUser(Long userid, Long oid) throws UserNotFoundException, OrderNotFoundException {
 		Order order = getUserOrder(userid, oid);
 		orderService.deleteOrder(order.getId());
 	}

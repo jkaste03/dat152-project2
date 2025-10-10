@@ -6,6 +6,7 @@ package no.hvl.dat152.rest.ws.controller;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import no.hvl.dat152.rest.ws.exceptions.AuthorNotFoundException;
 import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Book;
 import no.hvl.dat152.rest.ws.service.AuthorService;
+import no.hvl.dat152.rest.ws.service.BookService;
 
 /**
  * 
@@ -30,9 +32,11 @@ import no.hvl.dat152.rest.ws.service.AuthorService;
 public class AuthorController {
 
 	private final AuthorService authorService;
+	private final BookService bookService;
 
-	public AuthorController(AuthorService authorService) {
+	public AuthorController(AuthorService authorService, BookService bookService) {
 		this.authorService = authorService;
+		this.bookService = bookService;
 	}
 
 	@GetMapping("/authors")
@@ -55,7 +59,16 @@ public class AuthorController {
 		return new ResponseEntity<>(author, HttpStatus.OK);
 	}
 
-	// TODO - getBooksByAuthorId (@Mappings, URI, and method)
+	@GetMapping("authors/{id}/books")
+	public ResponseEntity<Object> getBooksByAuthorId(@PathVariable int id) {
+		Author author = authorService.findById(id);
+		if (author == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		Set<Book> books = author.getBooks();
+
+		return new ResponseEntity<>(books, HttpStatus.OK);
+	}
 
 	@PostMapping("/authors")
 	public ResponseEntity<Author> createAuthor(@RequestBody Author author) {

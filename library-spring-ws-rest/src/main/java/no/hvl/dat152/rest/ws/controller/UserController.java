@@ -105,8 +105,8 @@ public class UserController {
 	}
 
 	@DeleteMapping(value = "/users/{uid}/orders/{oid}")
-	public ResponseEntity<Order> deleteUserOrder(@PathVariable String uid, @PathVariable String oid)
-			throws NumberFormatException, UserNotFoundException {
+	public ResponseEntity<Void> deleteUserOrder(@PathVariable String uid, @PathVariable String oid)
+			throws NumberFormatException, UserNotFoundException, OrderNotFoundException {
 
 		Long lUid = Long.parseLong(uid);
 
@@ -126,7 +126,7 @@ public class UserController {
 
 		User user = userService.createOrdersForUser(lUid, order);
 
-		return new ResponseEntity<>(user, HttpStatus.OK);
+		return new ResponseEntity<>(user, HttpStatus.CREATED);
 
 	}
 }

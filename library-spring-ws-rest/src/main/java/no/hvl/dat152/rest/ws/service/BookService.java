@@ -63,8 +63,15 @@ public class BookService {
 
 	// TODO public Set<Author> findAuthorsOfBookByISBN(String isbn)
 
-	// TODO public void deleteById(long id)
-
-	// TODO public void deleteByISBN(String isbn)
+	public void deleteById(long id) {
+		Book book = null;
+		try {
+			book = bookRepository.findById(id)
+					.orElseThrow(() -> new BookNotFoundException("Book with id " + id + " does not exist"));
+		} catch (BookNotFoundException e) {
+			e.printStackTrace();
+		}
+		bookRepository.delete(book);
+	}
 
 }
