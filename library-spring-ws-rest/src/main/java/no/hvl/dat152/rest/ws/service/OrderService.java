@@ -53,8 +53,9 @@ public class OrderService {
 	}
 
 	public List<Order> findByExpiryDate(LocalDate expiry, Pageable page) {
-		System.out.println(expiry);
-		System.out.println(page);
+		if (expiry == null) {
+			return orderRepository.findByExpiryBefore(LocalDate.now().plusYears(1000), page).getContent();
+		}
 		return orderRepository.findOrderByExpiry(expiry, page.getPageSize(), (int) page.getOffset());
 
 	}

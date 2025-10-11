@@ -27,7 +27,6 @@ import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
 import no.hvl.dat152.rest.ws.model.Book;
 import no.hvl.dat152.rest.ws.model.Order;
 import no.hvl.dat152.rest.ws.model.User;
-import no.hvl.dat152.rest.ws.service.OrderService;
 import no.hvl.dat152.rest.ws.service.UserService;
 
 /**
@@ -41,11 +40,9 @@ public class UserController {
 	private UserService userService;
 
 	private final OrderLinkAdder orderLinkAdder;
-	private final OrderService orderService;
 
-	public UserController(OrderLinkAdder userLinkAdder, OrderService orderService) {
+	public UserController(OrderLinkAdder userLinkAdder) {
 		this.orderLinkAdder = userLinkAdder;
-		this.orderService = orderService;
 	}
 
 	@GetMapping("/users")
