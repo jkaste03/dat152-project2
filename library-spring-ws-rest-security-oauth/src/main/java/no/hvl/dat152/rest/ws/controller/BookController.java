@@ -34,6 +34,7 @@ import no.hvl.dat152.rest.ws.service.BookService;
  * @author tdoy
  */
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/elibrary/api/v1")
 public class BookController {
 

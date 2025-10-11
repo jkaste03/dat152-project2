@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import no.hvl.dat152.rest.ws.exceptions.BookNotFoundException;
@@ -22,6 +23,7 @@ import no.hvl.dat152.rest.ws.repository.BookRepository;
  * @author tdoy
  */
 @Service
+@PreAuthorize("hasRole('ADMIN')")
 public class BookService {
 
 	@Autowired

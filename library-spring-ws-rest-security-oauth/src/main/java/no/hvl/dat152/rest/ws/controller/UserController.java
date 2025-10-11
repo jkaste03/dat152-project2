@@ -36,6 +36,7 @@ import no.hvl.dat152.rest.ws.service.UserService;
  */
 @RestController
 @RequestMapping("/elibrary/api/v1")
+@PreAuthorize("hasRole('ADMIN') or #id == authentication.id")
 public class UserController {
 
 	// TODO authority annotation

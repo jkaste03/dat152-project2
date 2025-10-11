@@ -34,10 +34,9 @@ import no.hvl.dat152.rest.ws.service.OrderService;
  * @author tdoy
  */
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/elibrary/api/v1")
 public class OrderController {
-
-	// TODO authority annotation
 
 	private final OrderService orderService;
 	private final OrderLinkAdder orderLinkAdder;

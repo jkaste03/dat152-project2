@@ -11,6 +11,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +29,7 @@ import no.hvl.dat152.rest.ws.security.UserDetailsImpl;
  * @author tdoy
  */
 @Service
+@PreAuthorize("hasRole('ADMIN')")
 public class OrderService {
 
 	@Autowired

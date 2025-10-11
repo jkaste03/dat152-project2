@@ -8,11 +8,11 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import no.hvl.dat152.rest.ws.exceptions.AuthorNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.UpdateAuthorFailedException;
-import no.hvl.dat152.rest.ws.exceptions.UpdateBookFailedException;
 import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Book;
 import no.hvl.dat152.rest.ws.repository.AuthorRepository;
@@ -21,6 +21,7 @@ import no.hvl.dat152.rest.ws.repository.AuthorRepository;
  * @author tdoy
  */
 @Service
+@PreAuthorize("hasRole('ADMIN')")
 public class AuthorService {
 
 	@Autowired

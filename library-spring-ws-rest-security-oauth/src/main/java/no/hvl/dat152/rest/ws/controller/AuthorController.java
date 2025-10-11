@@ -23,16 +23,14 @@ import no.hvl.dat152.rest.ws.exceptions.UpdateAuthorFailedException;
 import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Book;
 import no.hvl.dat152.rest.ws.service.AuthorService;
-import no.hvl.dat152.rest.ws.service.BookService;
 
 /**
  * 
  */
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/elibrary/api/v1")
 public class AuthorController {
-
-	// TODO authority annotation
 
 	private final AuthorService authorService;
 
