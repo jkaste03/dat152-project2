@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import no.hvl.dat152.rest.ws.controller.hateoas.OrderLinkAdder;
 import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
+import no.hvl.dat152.rest.ws.exceptions.UpdateOrderFailedException;
 import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
 import no.hvl.dat152.rest.ws.model.Order;
 import no.hvl.dat152.rest.ws.service.OrderService;
@@ -58,7 +59,8 @@ public class OrderController {
 	}
 
 	@GetMapping("orders/{id}")
-	public ResponseEntity<Order> getBorrowOrder(@PathVariable long id) throws OrderNotFoundException {
+	public ResponseEntity<Order> getBorrowOrder(@PathVariable long id)
+			throws OrderNotFoundException, UpdateOrderFailedException {
 		Order order = orderService.findOrder(id);
 		orderLinkAdder.addLinks(order);
 		return new ResponseEntity<>(order, HttpStatus.OK);
@@ -66,8 +68,7 @@ public class OrderController {
 
 	@PutMapping("/orders/{id}")
 	public ResponseEntity<Order> updateOrder(@PathVariable long id, @RequestBody Order order)
-			throws OrderNotFoundException {
-		orderService.findOrder(id);
+			throws OrderNotFoundException, UpdateOrderFailedException {
 		Order nOrder = orderService.updateOrder(order, id);
 		return new ResponseEntity<>(nOrder, HttpStatus.OK);
 	}

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -57,9 +58,18 @@ public class BookService {
 		bookRepository.delete(findByISBN(isbn));
 	}
 
-	public Book updateBook(Book book, String isbn) {
-		bookRepository.findBookByISBN(isbn);
-		return bookRepository.save(book);
+	public Book updateBook(Book book, String isbn) throws BookNotFoundException, UpdateBookFailedException {
+		findByISBN(isbn);
+		if (!isbn.equals(book.getIsbn())) {
+			throw new UpdateBookFailedException(
+					"ISBN mismatch between provided book (" + book.getIsbn() + ") and provided isbn (" + isbn + ")");
+		}
+		try {
+			return bookRepository.save(book);
+		} catch (DataAccessException e) {
+			throw new UpdateBookFailedException(
+					"Failed to update book with ISBN " + isbn + ": " + e.getMessage(), e);
+		}
 	}
 
 	public List<Book> findAllPaginate(Pageable page) {

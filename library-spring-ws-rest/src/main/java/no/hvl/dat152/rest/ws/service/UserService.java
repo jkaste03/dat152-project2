@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
+import no.hvl.dat152.rest.ws.exceptions.UpdateUserFailedException;
 import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
-import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Order;
 import no.hvl.dat152.rest.ws.model.User;
-import no.hvl.dat152.rest.ws.repository.OrderRepository;
 import no.hvl.dat152.rest.ws.repository.UserRepository;
 
 /**
@@ -53,11 +53,19 @@ public class UserService {
 		userRepository.delete(findUser(id));
 	}
 
-	public User updateUser(User user, Long id) throws UserNotFoundException {
+	public User updateUser(User user, long id)
+			throws UpdateUserFailedException, UserNotFoundException {
 		findUser(id);
-		User uUser = saveUser(user);
-
-		return uUser;
+		if (id != user.getUserid()) {
+			throw new UpdateUserFailedException(
+					"Id mismatch between provided user (" + user.getUserid() + ") and provided id (" + id + ")");
+		}
+		try {
+			return userRepository.save(user);
+		} catch (DataAccessException e) {
+			throw new UpdateUserFailedException(
+					"Failed to update user with id " + id + ": " + e.getMessage(), e);
+		}
 	}
 
 	public Set<Order> getUserOrders(Long userid) throws UserNotFoundException {

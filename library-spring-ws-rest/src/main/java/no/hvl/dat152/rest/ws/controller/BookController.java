@@ -83,9 +83,8 @@ public class BookController {
 
 	@PutMapping("/books/{isbn}")
 	public ResponseEntity<Book> updateBook(@PathVariable String isbn, @RequestBody Book book)
-			throws BookNotFoundException {
-		bookService.findByISBN(isbn); // Will catch exception if not found
-		Book uBook = bookService.saveBook(book);
+			throws BookNotFoundException, UpdateBookFailedException {
+		Book uBook = bookService.updateBook(book, isbn);
 		return new ResponseEntity<>(uBook, HttpStatus.OK);
 	}
 

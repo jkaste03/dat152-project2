@@ -7,16 +7,14 @@ import java.util.List;
 
 import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import no.hvl.dat152.rest.ws.exceptions.BookNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
-import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
-import no.hvl.dat152.rest.ws.model.Book;
+import no.hvl.dat152.rest.ws.exceptions.UpdateOrderFailedException;
 import no.hvl.dat152.rest.ws.model.Order;
-import no.hvl.dat152.rest.ws.model.User;
 import no.hvl.dat152.rest.ws.repository.OrderRepository;
 
 /**
@@ -60,11 +58,18 @@ public class OrderService {
 
 	}
 
-	public Order updateOrder(Order order, Long id) throws OrderNotFoundException {
+	public Order updateOrder(Order order, long id)
+			throws UpdateOrderFailedException, OrderNotFoundException {
 		findOrder(id);
-		Order uOrder = saveOrder(order);
-
-		return uOrder;
+		if (id != order.getId()) {
+			throw new UpdateOrderFailedException(
+					"Id mismatch between provided order (" + order.getId() + ") and provided id (" + id + ")");
+		}
+		try {
+			return orderRepository.save(order);
+		} catch (DataAccessException e) {
+			throw new UpdateOrderFailedException(
+					"Failed to update order with id " + id + ": " + e.getMessage(), e);
+		}
 	}
-
 }

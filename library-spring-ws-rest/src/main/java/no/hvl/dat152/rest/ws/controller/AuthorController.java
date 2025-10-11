@@ -6,8 +6,6 @@ package no.hvl.dat152.rest.ws.controller;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.catalina.connector.Response;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import no.hvl.dat152.rest.ws.exceptions.AuthorNotFoundException;
+import no.hvl.dat152.rest.ws.exceptions.UpdateAuthorFailedException;
+import no.hvl.dat152.rest.ws.exceptions.UpdateBookFailedException;
 import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Book;
 import no.hvl.dat152.rest.ws.service.AuthorService;
-import no.hvl.dat152.rest.ws.service.BookService;
 
 /**
  * 
@@ -32,11 +31,9 @@ import no.hvl.dat152.rest.ws.service.BookService;
 public class AuthorController {
 
 	private final AuthorService authorService;
-	private final BookService bookService;
 
-	public AuthorController(AuthorService authorService, BookService bookService) {
+	public AuthorController(AuthorService authorService) {
 		this.authorService = authorService;
-		this.bookService = bookService;
 	}
 
 	@GetMapping("/authors")
@@ -77,10 +74,9 @@ public class AuthorController {
 	}
 
 	@PutMapping("/authors/{id}")
-	public ResponseEntity<Author> updateAuthor(@RequestBody Author author) throws AuthorNotFoundException {
-		authorService.findById(author.getAuthorId()); // Will catch exception if not found
-		Author uAuthor = authorService.saveAuthor(author);
+	public ResponseEntity<Author> updateAuthor(@PathVariable int id, @RequestBody Author author)
+			throws AuthorNotFoundException, UpdateAuthorFailedException {
+		Author uAuthor = authorService.updateAuthor(author, id);
 		return new ResponseEntity<>(uAuthor, HttpStatus.OK);
 	}
-
 }
