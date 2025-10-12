@@ -70,6 +70,10 @@ public class OrderService {
 	public Order updateOrder(Order order, long id)
 			throws UpdateOrderFailedException, OrderNotFoundException {
 		findOrder(id);
+		System.out.println(id);
+		if (order.getId() == null) {
+			order.setId(id);
+		}
 		if (id != order.getId()) {
 			throw new UpdateOrderFailedException(
 					"Id mismatch between provided order (" + order.getId() + ") and provided id (" + id + ")");

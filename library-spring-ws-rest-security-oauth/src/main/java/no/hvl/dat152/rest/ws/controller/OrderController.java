@@ -65,6 +65,8 @@ public class OrderController {
 	@PutMapping("/orders/{id}")
 	public ResponseEntity<Order> updateOrder(@PathVariable long id, @RequestBody Order order)
 			throws OrderNotFoundException, UpdateOrderFailedException {
+		System.out.println(order);
+		System.out.println(id);
 		Order nOrder = orderService.updateOrder(order, id);
 		return new ResponseEntity<>(nOrder, HttpStatus.OK);
 	}

@@ -36,7 +36,6 @@ import no.hvl.dat152.rest.ws.service.UserService;
  */
 @RestController
 @RequestMapping("/elibrary/api/v1")
-// @PreAuthorize("hasRole('ADMIN') or #id == authentication.id")
 @PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
@@ -64,6 +63,7 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/users/{id}")
+	@PreAuthorize("hasRole('ADMIN') or #id == authentication.details.userid")
 	public ResponseEntity<Object> getUser(@PathVariable long id)
 			throws UserNotFoundException {
 
@@ -81,6 +81,7 @@ public class UserController {
 	}
 
 	@PutMapping("/users/{id}")
+	@PreAuthorize("hasRole('ADMIN') or #id == authentication.details.userid")
 	public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user)
 			throws UserNotFoundException, UpdateUserFailedException {
 		User uUser = userService.updateUser(user, id);
@@ -88,47 +89,48 @@ public class UserController {
 	}
 
 	@DeleteMapping("/users/{id}")
-	public ResponseEntity<Void> deleteUser(@PathVariable String id) throws UserNotFoundException {
-		Long lId = Long.parseLong(id);
-		userService.findUser(lId); // Will catch exception if not found
-		userService.deleteUser(lId);
+	@PreAuthorize("hasRole('ADMIN') or #id == authentication.details.userid")
+	public ResponseEntity<Void> deleteUser(@PathVariable long id) throws UserNotFoundException {
+		userService.findUser(id); // Will catch exception if not found
+		userService.deleteUser(id);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/users/{id}/orders")
-	public ResponseEntity<Object> getUserOrders(@PathVariable String id)
+	@PreAuthorize("hasRole('ADMIN') or #id == authentication.details.userid")
+	public ResponseEntity<Object> getUserOrders(@PathVariable long id)
 			throws UserNotFoundException, OrderNotFoundException {
 
-		Set<Order> orders = userService.getUserOrders(Long.parseLong(id));
+		Set<Order> orders = userService.getUserOrders(id);
 
 		return new ResponseEntity<>(orders, HttpStatus.OK);
-
 	}
 
 	@GetMapping(value = "/users/{uid}/orders/{oid}")
-	public ResponseEntity<Order> getUserOrder(@PathVariable String uid, @PathVariable String oid)
+	@PreAuthorize("hasRole('ADMIN') or #uid == authentication.details.userid")
+	public ResponseEntity<Order> getUserOrder(@PathVariable long uid, @PathVariable long oid)
 			throws UserNotFoundException {
 
-		Order order = userService.getUserOrder(Long.parseLong(uid), Long.parseLong(oid));
+		Order order = userService.getUserOrder(uid, oid);
 
 		return new ResponseEntity<>(order, HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "/users/{uid}/orders/{oid}")
-	public ResponseEntity<Void> deleteUserOrder(@PathVariable String uid, @PathVariable String oid)
-			throws NumberFormatException, UserNotFoundException, OrderNotFoundException {
+	@PreAuthorize("hasRole('ADMIN') or #uid == authentication.details.userid")
+	public ResponseEntity<Void> deleteUserOrder(@PathVariable long uid, @PathVariable long oid)
+			throws UserNotFoundException, OrderNotFoundException {
 
-		Long lUid = Long.parseLong(uid);
-
-		userService.findUser(lUid); // Will catch exception if not found
-		userService.deleteOrderForUser(lUid, Long.parseLong(oid));
+		userService.findUser(uid); // Will catch exception if not found
+		userService.deleteOrderForUser(uid, oid);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 
 	}
 
 	@PostMapping(value = "/users/{uid}/orders")
+	@PreAuthorize("hasRole('ADMIN') or #uid == authentication.details.userid")
 	public ResponseEntity<Object> createUserOrder(@PathVariable long uid, @RequestBody Order order)
 			throws UserNotFoundException, OrderNotFoundException, UpdateOrderFailedException {
 

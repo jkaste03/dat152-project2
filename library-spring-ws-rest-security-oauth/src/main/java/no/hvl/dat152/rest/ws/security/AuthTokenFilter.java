@@ -50,6 +50,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 														// encapsulate userDetails
 
 				SecurityContextHolder.getContext().setAuthentication(oauthJwtToken);
+
 			} catch (Exception e) {
 				LOGGER.error("Failed to update token authentication with user details: {}", e);
 			}

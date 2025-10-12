@@ -82,41 +82,37 @@ public class UserController {
 	}
 
 	@DeleteMapping("/users/{id}")
-	public ResponseEntity<Void> deleteUser(@PathVariable String id) throws UserNotFoundException {
-		Long lId = Long.parseLong(id);
-		userService.findUser(lId); // Will catch exception if not found
-		userService.deleteUser(lId);
+	public ResponseEntity<Void> deleteUser(@PathVariable long id) throws UserNotFoundException {
+		userService.findUser(id); // Will catch exception if not found
+		userService.deleteUser(id);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/users/{id}/orders")
-	public ResponseEntity<Object> getUserOrders(@PathVariable String id)
+	public ResponseEntity<Object> getUserOrders(@PathVariable long id)
 			throws UserNotFoundException, OrderNotFoundException {
 
-		Set<Order> orders = userService.getUserOrders(Long.parseLong(id));
+		Set<Order> orders = userService.getUserOrders(id);
 
 		return new ResponseEntity<>(orders, HttpStatus.OK);
-
 	}
 
 	@GetMapping(value = "/users/{uid}/orders/{oid}")
-	public ResponseEntity<Order> getUserOrder(@PathVariable String uid, @PathVariable String oid)
+	public ResponseEntity<Order> getUserOrder(@PathVariable long uid, @PathVariable long oid)
 			throws UserNotFoundException {
 
-		Order order = userService.getUserOrder(Long.parseLong(uid), Long.parseLong(oid));
+		Order order = userService.getUserOrder(uid, oid);
 
 		return new ResponseEntity<>(order, HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "/users/{uid}/orders/{oid}")
-	public ResponseEntity<Void> deleteUserOrder(@PathVariable String uid, @PathVariable String oid)
-			throws NumberFormatException, UserNotFoundException, OrderNotFoundException {
+	public ResponseEntity<Void> deleteUserOrder(@PathVariable long uid, @PathVariable long oid)
+			throws UserNotFoundException, OrderNotFoundException {
 
-		Long lUid = Long.parseLong(uid);
-
-		userService.findUser(lUid); // Will catch exception if not found
-		userService.deleteOrderForUser(lUid, Long.parseLong(oid));
+		userService.findUser(uid); // Will catch exception if not found
+		userService.deleteOrderForUser(uid, oid);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 

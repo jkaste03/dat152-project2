@@ -23,8 +23,6 @@ import no.hvl.dat152.rest.ws.repository.UserRepository;
 @Service
 public class UserService {
 
-	// TODO copy your solutions from previous tasks!
-
 	@Autowired
 	private UserRepository userRepository;
 
