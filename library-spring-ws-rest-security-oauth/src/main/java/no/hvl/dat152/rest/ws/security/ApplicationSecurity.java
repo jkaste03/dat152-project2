@@ -26,63 +26,62 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableMethodSecurity
 public class ApplicationSecurity {
-	
+
 	@Autowired
 	private AuthTokenFilter authTokenFilter;
-	
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		
-		http.csrf(csrf->csrf.disable());
+
+		http.csrf(csrf -> csrf.disable());
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-		http.authorizeHttpRequests(authorize -> 
-				authorize.anyRequest().authenticated());
+		http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated());
 		http.oauth2ResourceServer(oauth2 -> oauth2
 				.jwt(jwtconfig -> jwtconfig.jwtAuthenticationConverter(jwt -> RoleConverter(jwt))));
-		
+
 		http.addFilterAfter(authTokenFilter, BearerTokenAuthenticationFilter.class);
-		
-		return http.build();		
+
+		return http.build();
 	}
 
-	
+	// Spring adds the JwtAuthenticationToken to the SecurityContextHolder
 	private JwtAuthenticationToken RoleConverter(Jwt jwt) {
-		
+
 		// initialize
 		Collection<GrantedAuthority> rgrantedAuthorities = null;
 		Collection<GrantedAuthority> cgrantedAuthorities = null;
-		
+
 		// this is realm roles
 		try {
 			Map<String, Collection<String>> realmAccess = jwt.getClaim("realm_access");
 			Collection<String> realmroles = realmAccess.get("roles");
 			rgrantedAuthorities = realmroles.stream()
-					.map(role -> new SimpleGrantedAuthority(role))
+					.map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
 					.collect(Collectors.toList());
-		}catch(Exception e) {
+		} catch (Exception e) {
 			//
 		}
 		// this is client roles
 		try {
-		Map<String, Map<String, Collection<String>>> resource_claim = jwt.getClaim("resource_access");
-		Map<String, Collection<String>> clientAccess = resource_claim.get("dat152oblig2");
-		Collection<String> roles = clientAccess.get("roles");
-		
-		cgrantedAuthorities = roles.stream()
-				.map(role -> new SimpleGrantedAuthority(role))
-				.collect(Collectors.toList());
-		}catch(Exception e) {
+			Map<String, Map<String, Collection<String>>> resource_claim = jwt.getClaim("resource_access");
+			Map<String, Collection<String>> clientAccess = resource_claim.get("dat152oblig2");
+			Collection<String> roles = clientAccess.get("roles");
+
+			cgrantedAuthorities = roles.stream()
+					.map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+					.collect(Collectors.toList());
+		} catch (Exception e) {
 			//
 		}
-		
+
 		try {
 			cgrantedAuthorities.addAll(rgrantedAuthorities);
-		}catch(Exception e) {
+		} catch (Exception e) {
 			//
 		}
-		
-		System.out.println("All Roles = "+cgrantedAuthorities);
-		
+
+		System.out.println("All Roles = " + cgrantedAuthorities);
+
 		return new JwtAuthenticationToken(jwt, cgrantedAuthorities);
 	}
 }

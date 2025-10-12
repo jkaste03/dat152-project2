@@ -21,7 +21,7 @@ import no.hvl.dat152.rest.ws.repository.AuthorRepository;
  * @author tdoy
  */
 @Service
-@PreAuthorize("hasRole('ADMIN')")
+// @PreAuthorize("hasRole('ADMIN')")
 public class AuthorService {
 
 	@Autowired
@@ -32,6 +32,7 @@ public class AuthorService {
 	}
 
 	public Author findById(int id) throws AuthorNotFoundException {
+		System.out.println(authorRepository.findAll());
 		Author author = authorRepository.findById(id)
 				.orElseThrow(() -> new AuthorNotFoundException("Author with id " + id + " does not exist"));
 		return author;

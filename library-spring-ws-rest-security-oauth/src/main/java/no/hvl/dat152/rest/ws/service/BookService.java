@@ -23,7 +23,7 @@ import no.hvl.dat152.rest.ws.repository.BookRepository;
  * @author tdoy
  */
 @Service
-@PreAuthorize("hasRole('ADMIN')")
+// @PreAuthorize("hasRole('ADMIN')")
 public class BookService {
 
 	@Autowired
