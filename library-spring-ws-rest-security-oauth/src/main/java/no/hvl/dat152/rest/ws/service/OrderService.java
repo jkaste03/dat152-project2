@@ -29,7 +29,7 @@ import no.hvl.dat152.rest.ws.security.UserDetailsImpl;
  * @author tdoy
  */
 @Service
-@PreAuthorize("hasRole('ADMIN')")
+// @PreAuthorize("hasRole('ADMIN')")
 public class OrderService {
 
 	@Autowired
@@ -46,7 +46,7 @@ public class OrderService {
 
 		Order order = orderRepository.findById(id)
 				.orElseThrow(
-						() -> new OrderNotFoundException("Order with id: " + id + " not found in the order list!"));
+						() -> new OrderNotFoundException("Order with id: " + id + " not found in the repository!"));
 
 		return order;
 	}
@@ -70,7 +70,6 @@ public class OrderService {
 	public Order updateOrder(Order order, long id)
 			throws UpdateOrderFailedException, OrderNotFoundException {
 		findOrder(id);
-		System.out.println(id);
 		if (order.getId() == null) {
 			order.setId(id);
 		}

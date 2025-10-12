@@ -110,7 +110,7 @@ public class UserController {
 	@GetMapping(value = "/users/{uid}/orders/{oid}")
 	@PreAuthorize("hasRole('ADMIN') or #uid == authentication.details.userid")
 	public ResponseEntity<Order> getUserOrder(@PathVariable long uid, @PathVariable long oid)
-			throws UserNotFoundException {
+			throws UserNotFoundException, OrderNotFoundException {
 
 		Order order = userService.getUserOrder(uid, oid);
 
@@ -120,9 +120,7 @@ public class UserController {
 	@DeleteMapping(value = "/users/{uid}/orders/{oid}")
 	@PreAuthorize("hasRole('ADMIN') or #uid == authentication.details.userid")
 	public ResponseEntity<Void> deleteUserOrder(@PathVariable long uid, @PathVariable long oid)
-			throws UserNotFoundException, OrderNotFoundException {
-
-		userService.findUser(uid); // Will catch exception if not found
+			throws OrderNotFoundException, UserNotFoundException {
 		userService.deleteOrderForUser(uid, oid);
 
 		return new ResponseEntity<>(HttpStatus.OK);

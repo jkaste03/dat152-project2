@@ -23,11 +23,13 @@ import no.hvl.dat152.rest.ws.repository.UserRepository;
 @Service
 public class UserService {
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
+	private final OrderService orderService;
 
-	@Autowired
-	private OrderService orderService;
+	public UserService(UserRepository userRepository, OrderService orderService) {
+		this.userRepository = userRepository;
+		this.orderService = orderService;
+	}
 
 	public User saveUser(User user) {
 		return userRepository.save(user);
@@ -72,13 +74,17 @@ public class UserService {
 		return existing.getOrders();
 	}
 
-	public Order getUserOrder(Long userid, Long oid) throws UserNotFoundException {
-		return getUserOrders(userid).stream().filter(o -> o.getId() == oid).findAny().orElse(null);
+	public Order getUserOrder(Long userid, Long oid) throws UserNotFoundException, OrderNotFoundException {
+		return getUserOrders(userid).stream().filter(o -> o.getId() == oid).findAny()
+				.orElseThrow(() -> new OrderNotFoundException(
+						"User with id: " + userid + " does not have an order with id: " + oid));
 	}
 
 	public void deleteOrderForUser(Long userid, Long oid) throws UserNotFoundException, OrderNotFoundException {
-		getUserOrder(userid, oid);
-		orderService.deleteOrder(userid);
+		User user = findUser(userid);
+		Order order = getUserOrder(userid, oid);
+		user.removeOrder(order);
+		orderService.deleteOrder(oid);
 	}
 
 	public User createOrdersForUser(Long userid, Order order) throws UserNotFoundException {

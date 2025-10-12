@@ -30,7 +30,6 @@ class TestAuthor {
 	@DisplayName("JUnit test for @GetMapping(/authors) endpoint")
 	@Test
 	public void getAllAuthors_thenOK() {
-		System.out.println(ADMIN_TOKEN);
 		Response response = RestAssured.given()
 				.header("Authorization", "Bearer " + ADMIN_TOKEN)
 				.get(API_ROOT + "/authors");
