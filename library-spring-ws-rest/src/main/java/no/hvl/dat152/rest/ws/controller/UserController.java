@@ -118,11 +118,11 @@ public class UserController {
 
 	}
 
-	@PostMapping(value = "/users/{uid}/orders")
-	public ResponseEntity<Object> createUserOrder(@PathVariable long uid, @RequestBody Order order)
+	@PostMapping(value = "/users/{id}/orders")
+	public ResponseEntity<Object> createUserOrder(@PathVariable long id, @RequestBody Order order)
 			throws UserNotFoundException, OrderNotFoundException, UpdateOrderFailedException {
 
-		User user = userService.createOrdersForUser(uid, order);
+		User user = userService.createOrdersForUser(id, order);
 		Set<Order> orders = user.getOrders();
 
 		orderLinkAdder.addLinks(orders);
