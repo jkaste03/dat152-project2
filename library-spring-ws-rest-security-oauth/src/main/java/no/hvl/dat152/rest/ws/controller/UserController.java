@@ -39,8 +39,6 @@ import no.hvl.dat152.rest.ws.service.UserService;
 @PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
-	// TODO authority annotation
-
 	@Autowired
 	private UserService userService;
 
