@@ -17,7 +17,7 @@ import io.restassured.response.Response;
 import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class TestUser {
 
 	

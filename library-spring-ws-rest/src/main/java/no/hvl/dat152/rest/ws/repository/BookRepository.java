@@ -22,10 +22,6 @@ import no.hvl.dat152.rest.ws.model.Book;
  */
 public interface BookRepository extends CrudRepository<Book, Long>, PagingAndSortingRepository<Book, Long> {
 	
-	boolean existsByIsbn(String isbn);
-	void deleteByIsbn(String isbn);
-	boolean existsById(long id);
-	void deleteById(long id);
 	Optional<Book> findByIsbn(String isbn);
 	
 	Page<Book> findAll(Pageable pageable);
@@ -33,7 +29,7 @@ public interface BookRepository extends CrudRepository<Book, Long>, PagingAndSor
 	Iterable<Book> findAll(Sort sort);
 	
 	@Query("SELECT b FROM Book b WHERE b.isbn = :isbn")
-	Book findBookByIsbn(@Param("isbn") String isbn);
+	Book findBookByISBN(@Param("isbn") String isbn);
 	
 	@Query("SELECT b FROM Book b join b.authors a WHERE a.authorId = :authorId")
 	List<Book> findBooksByAuthorId(@Param("authorId") int authorId);
