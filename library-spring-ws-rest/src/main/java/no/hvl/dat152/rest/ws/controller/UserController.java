@@ -110,10 +110,26 @@ public class UserController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/users/{uid}/orders")
+	@PostMapping("/users/{uid}/orders")
 	public ResponseEntity<User> createUserOrder(@PathVariable Long uid, @RequestBody Order order)
-			throws UserNotFoundException {
+			throws UserNotFoundException, OrderNotFoundException {
+
 		User user = userService.createOrdersForUser(uid, order);
-		return new ResponseEntity<>(user, HttpStatus.OK);
+
+		Link selfLink = linkTo(methodOn(UserController.class)
+				.getUserOrders(uid)).withSelfRel();
+
+		Link userLink = linkTo(methodOn(UserController.class)
+				.getUser(uid)).withRel("user");
+
+		Link allOrdersLink = linkTo(methodOn(UserController.class)
+				.getUserOrders(uid)).withRel("all-orders");
+
+		user.add(selfLink);
+		user.add(userLink);
+		user.add(allOrdersLink);
+
+		return new ResponseEntity<>(user, HttpStatus.CREATED);
 	}
+
 }
