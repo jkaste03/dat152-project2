@@ -17,7 +17,7 @@ import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.UnauthorizedOrderActionException;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TestOrder {
 
 

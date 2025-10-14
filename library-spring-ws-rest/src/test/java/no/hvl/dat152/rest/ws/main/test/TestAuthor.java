@@ -18,7 +18,7 @@ import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.service.AuthorService;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TestAuthor {
 
 	@Autowired
