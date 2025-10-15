@@ -10,6 +10,8 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
+
+import no.hvl.dat152.rest.ws.controller.OrderController;
 import no.hvl.dat152.rest.ws.controller.UserController;
 import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
@@ -17,6 +19,7 @@ import no.hvl.dat152.rest.ws.model.Order;
 import no.hvl.dat152.rest.ws.model.User;
 import no.hvl.dat152.rest.ws.repository.OrderRepository;
 import no.hvl.dat152.rest.ws.repository.UserRepository;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 /**
  * @author tdoy
@@ -81,11 +84,11 @@ public class UserService {
 		userRepository.save(user);
 	}
 
-	public Set<Order> createOrdersForUser(Long userid, Order order) throws UserNotFoundException {
+	public User createOrdersForUser(Long userid, Order order) throws UserNotFoundException, OrderNotFoundException {
 		User user = findUser(userid);
-		orderService.saveOrder(order);
+		order.add(linkTo(methodOn(OrderController.class).delteBookOrder(order.getId())).withRel(""));
 		user.getOrders().add(order);
 		userRepository.save(user);
-		return user.getOrders();
+		return user;
 	}
 }

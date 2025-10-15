@@ -97,8 +97,8 @@ public class UserController {
 
 	@PostMapping("/users/{id}/orders")
 	public ResponseEntity<Set<Order>> createUserOrder(@PathVariable Long id, @RequestBody Order order)
-			throws UserNotFoundException {
-		Set<Order> orders = userService.createOrdersForUser(id, order);
-		return new ResponseEntity<>(orders, HttpStatus.CREATED);
+			throws UserNotFoundException, OrderNotFoundException {
+		User user = userService.createOrdersForUser(id, order);
+		return new ResponseEntity<>(user.getOrders(), HttpStatus.CREATED);
 	}
 }
