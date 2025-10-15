@@ -7,8 +7,6 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Set;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
-
 import org.apache.catalina.connector.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -91,6 +89,7 @@ public class UserController {
 	@DeleteMapping("/users/{uid}/orders/{oid}")
 	public ResponseEntity<Void> deleteUserOrder(@PathVariable Long uid, @PathVariable Long oid)
 			throws UserNotFoundException, OrderNotFoundException {
+
 		userService.deleteOrderForUser(uid, oid);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -98,7 +97,15 @@ public class UserController {
 	@PostMapping("/users/{id}/orders")
 	public ResponseEntity<Set<Order>> createUserOrder(@PathVariable Long id, @RequestBody Order order)
 			throws UserNotFoundException, OrderNotFoundException {
+
 		User user = userService.createOrdersForUser(id, order);
+
+		user.getOrders().forEach(o -> {
+
+			o.addLinks();
+
+		});
 		return new ResponseEntity<>(user.getOrders(), HttpStatus.CREATED);
 	}
+
 }

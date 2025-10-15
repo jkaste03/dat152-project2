@@ -123,7 +123,7 @@ class TestUser {
 		List<Object> isbns = response.jsonPath().getList("isbn");
 		List<Object> hrefs = response.jsonPath().getList("links");
 
-		System.out.println(isbns + " asdfasdfasdfasdf");
+		response.prettyPrint();
 
 		assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
 		assertTrue(isbns.contains("rstuv1540"));

@@ -84,11 +84,10 @@ public class UserService {
 		userRepository.save(user);
 	}
 
-	public User createOrdersForUser(Long userid, Order order) throws UserNotFoundException, OrderNotFoundException {
+	public User createOrdersForUser(Long userid, Order order) throws UserNotFoundException {
 		User user = findUser(userid);
-		order.add(linkTo(methodOn(OrderController.class).delteBookOrder(order.getId())).withRel(""));
 		user.getOrders().add(order);
-		userRepository.save(user);
+		orderService.saveOrder(order);
 		return user;
 	}
 }

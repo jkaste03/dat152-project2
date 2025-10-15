@@ -5,9 +5,11 @@ package no.hvl.dat152.rest.ws.model;
 
 import java.time.LocalDate;
 
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +17,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import no.hvl.dat152.rest.ws.controller.OrderController;
+import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
+import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
 
 /**
  * 
@@ -85,36 +90,55 @@ public class Order extends RepresentationModel<Order> {
 		this.expiry = expiry;
 	}
 
-	// @Override
-	// public final int hashCode() {
-	// final int prime = 31;
-	// int result = 1;
-	// // result = prime * result + ((Long.valueOf(id) == null) ? 0 :
-	// // Long.hashCode(id));
-	// result = prime * result + ((isbn == null) ? 0 : isbn.hashCode());
-	// result = prime * result + ((expiry == null) ? 0 : expiry.hashCode());
-	// return result;
-	// }
+	@Override
+	public final int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		// result = prime * result + ((Long.valueOf(id) == null) ? 0 :
+		// Long.hashCode(id));
+		result = prime * result + ((isbn == null) ? 0 : isbn.hashCode());
+		result = prime * result + ((expiry == null) ? 0 : expiry.hashCode());
+		return result;
+	}
 
-	// @Override
-	// public final boolean equals(final Object obj) {
-	// if (this == obj) {
-	// return true;
-	// }
-	// if (obj == null) {
-	// return false;
-	// }
-	// if (getClass() != obj.getClass()) {
-	// return false;
-	// }
-	// Order order = (Order) obj;
+	@Override
+	public final boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Order order = (Order) obj;
 
-	// return this.id == order.id;
-	// }
+		return this.id == order.id;
+	}
 
-	// @Override
-	// public String toString() {
-	// return "Order [isbn=" + isbn + ", expiry=" + expiry + "]";
-	// }
+	@Override
+	public String toString() {
+		return "Order [isbn=" + isbn + ", expiry=" + expiry + "]";
+	}
 
+	public void addLinks() {
+		try {
+			Link getOrder = linkTo(methodOn(OrderController.class)
+					.getBorrowOrder(this.getId()))
+					.withRel("Get_Order");
+
+			Link updateOrder = linkTo(methodOn(OrderController.class)
+					.updateOrder(this.getId(), this))
+					.withRel("Update_Order");
+
+			Link deleteOrder = linkTo(methodOn(OrderController.class)
+					.deleteBookOrder(this.getId()))
+					.withRel("Delete_Order");
+
+			add(getOrder, updateOrder, deleteOrder);
+		} catch (OrderNotFoundException | UserNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 }
