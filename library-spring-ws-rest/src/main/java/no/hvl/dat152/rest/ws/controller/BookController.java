@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,39 +40,47 @@ public class BookController {
 
 	@Autowired
 	private BookService bookService;
-	
+
 	@GetMapping("/books")
-	public ResponseEntity<Object> getAllBooks(){
-		
+	public ResponseEntity<Object> getAllBooks() {
+
 		List<Book> books = bookService.findAll();
-		
-		if(books.isEmpty())
+
+		if (books.isEmpty())
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		
-		return new ResponseEntity<>(books, HttpStatus.OK);		
+
+		return new ResponseEntity<>(books, HttpStatus.OK);
 	}
-	
-	@GetMapping("/books/{isbn}")
-	public ResponseEntity<Object> getBook(@PathVariable String isbn) throws BookNotFoundException{
-		
+
+	@GetMapping("books/{isbn}")
+	public ResponseEntity<Object> getBook(@PathVariable String isbn) throws BookNotFoundException {
+
 		Book book = bookService.findByISBN(isbn);
-		
+
 		return new ResponseEntity<>(book, HttpStatus.OK);
-				
+
 	}
-	
+
 	@PostMapping("/books")
-	public ResponseEntity<Book> createBook(@RequestBody Book book){
-		
+	public ResponseEntity<Book> createBook(@RequestBody Book book) {
+
 		Book nbook = bookService.saveBook(book);
-		
+
 		return new ResponseEntity<>(nbook, HttpStatus.CREATED);
 	}
-	
+
 	// TODO - getAuthorsOfBookByISBN (@Mappings, URI, and method)
-	
-	// TODO - updateBookByISBN (@Mappings, URI, and method)
-	
+
+	// DONE - updateBookByISBN (@Mappings, URI, and method)
+	@PutMapping("/books/{isbn}")
+	public ResponseEntity<Book> updateBookByISBN(
+			@PathVariable String isbn,
+			@RequestBody Book book) {
+		bookService.updateBook(book, isbn);
+		return new ResponseEntity<>(HttpStatus.OK);
+
+	}
+
 	// TODO - deleteBookByISBN (@Mappings, URI, and method)
 
 }

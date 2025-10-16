@@ -49,6 +49,14 @@ public class BookService {
 	}
 	
 	// TODO public Book updateBook(Book book, String isbn)
+	public Book updateBook(Book book, String isbn) {
+		Book eBook = bookRepository.findBookByISBN(isbn);
+		eBook.setAuthors(book.getAuthors());
+		eBook.setIsbn(isbn);
+		eBook.setTitle(book.getTitle());
+		eBook.setId(book.getId());
+		return bookRepository.save(eBook);
+	}
 	
 	// TODO public List<Book> findAllPaginate(Pageable page)
 	
