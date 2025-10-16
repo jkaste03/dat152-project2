@@ -50,8 +50,11 @@ public class BookService {
 	}
 	
 	// DONE public Book updateBook(Book book, String isbn)
-	public Book updateBook(Book book, String isbn) {
+	public Book updateBook(Book book, String isbn) throws BookNotFoundException {
 		Book eBook = bookRepository.findBookByISBN(isbn);
+		if (eBook == null) {
+			throw new BookNotFoundException("Book with isbn = " + isbn + " not found!");
+		}
 		eBook.setAuthors(book.getAuthors());
 		eBook.setIsbn(isbn);
 		eBook.setTitle(book.getTitle());
@@ -67,19 +70,26 @@ public class BookService {
 	}
 	
 	// DONE public Set<Author> findAuthorsOfBookByISBN(String isbn)
-	Set<Author> findAuthorsOfBookByISBN(String isbn) {
+	Set<Author> findAuthorsOfBookByISBN(String isbn) throws BookNotFoundException {
 		Book eBook = bookRepository.findBookByISBN(isbn);
+		if (eBook == null) {
+			throw new BookNotFoundException("Book with isbn = " + isbn + " not found!");
+		}
 		return eBook.getAuthors();
 	}
 	// DONE public void deleteById(long id)
-	public void deleteById(long id) {
-		bookRepository.findById(id);
-		bookRepository.deleteById(id);
+	public void deleteById(long id) throws BookNotFoundException {
+		Book eBook = bookRepository.findById(id)
+			.orElseThrow(() -> new BookNotFoundException("Book with id = " + id + " not found!"));
+		bookRepository.delete(eBook);
 	}
 	
 	// DONE public void deleteByISBN(String isbn) 
-	public void deleteByISBN(String isbn) {
+	public void deleteByISBN(String isbn) throws BookNotFoundException {
 		Book eBook = bookRepository.findBookByISBN(isbn);
+		if (eBook == null) {
+			throw new BookNotFoundException("Book with isbn = " + isbn + " not found!");
+		}
 		bookRepository.delete(eBook);
 	}
 	
