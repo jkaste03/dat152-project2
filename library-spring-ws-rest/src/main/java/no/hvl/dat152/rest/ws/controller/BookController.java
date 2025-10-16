@@ -42,13 +42,9 @@ public class BookController {
 	private BookService bookService;
 
 	@GetMapping("/books")
-	public ResponseEntity<Object> getAllBooks() {
+	public ResponseEntity<Object> getAllBooks() throws BookNotFoundException {
 
 		List<Book> books = bookService.findAll();
-
-		if (books.isEmpty())
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
 		return new ResponseEntity<>(books, HttpStatus.OK);
 	}
 
@@ -69,18 +65,29 @@ public class BookController {
 		return new ResponseEntity<>(nbook, HttpStatus.CREATED);
 	}
 
-	// TODO - getAuthorsOfBookByISBN (@Mappings, URI, and method)
+	// DONE - getAuthorsOfBookByISBN (@Mappings, URI, and method)
+	@GetMapping("/books/{isbn}/authors")
+	public ResponseEntity<Set<Author>> getAuthorsOfBooksByISBN(@PathVariable String isbn)
+			throws BookNotFoundException {
+		Set<Author> authorsOfBook = bookService.findAuthorsOfBookByISBN(isbn);
+		return ResponseEntity.ok(authorsOfBook);
+	}
 
 	// DONE - updateBookByISBN (@Mappings, URI, and method)
+
 	@PutMapping("/books/{isbn}")
 	public ResponseEntity<Book> updateBookByISBN(
 			@PathVariable String isbn,
-			@RequestBody Book book) {
-		bookService.updateBook(book, isbn);
-		return new ResponseEntity<>(HttpStatus.OK);
+			@RequestBody Book book) throws BookNotFoundException {
 
+		Book updated = bookService.updateBook(book, isbn);
+		return new ResponseEntity<>(updated, HttpStatus.OK);
 	}
 
-	// TODO - deleteBookByISBN (@Mappings, URI, and method)
-
+	// DONE - deleteBookByISBN (@Mappings, URI, and method)
+	@DeleteMapping("/books/{isbn}")
+	public ResponseEntity<Void> deleteBookByISBN(@PathVariable String isbn) throws BookNotFoundException {
+		bookService.deleteByISBN(isbn);
+		return ResponseEntity.ok().build(); // Needed to return 200 with empty body for unit tests (fixed by not serializing the deleted entry)
+	}
 }
