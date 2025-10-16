@@ -22,27 +22,31 @@ public class AuthorService {
 
 	@Autowired
 	private AuthorRepository authorRepository;
-		
-	
+
 	public Author findById(int id) throws AuthorNotFoundException {
-		
+
 		Author author = authorRepository.findById(id)
-				.orElseThrow(()-> new AuthorNotFoundException("Author with the id: "+id+ "not found!"));
-		
+				.orElseThrow(() -> new AuthorNotFoundException("Author with the id: " + id + "not found!"));
+
 		return author;
 	}
-	
-	// TODO public saveAuthor(Author author)
-		
-	
-	// TODO public Author updateAuthor(Author author, int id)
-		
-	
-	// TODO public List<Author> findAll()
-	
-	
-	// TODO public void deleteById(int id) throws AuthorNotFoundException 
 
-	
+	// TODO public saveAuthor(Author author)
+
+	// TODO public Author updateAuthor(Author author, int id)
+
+	// DONE public List<Author> findAll()
+	public List<Author> findAll() throws AuthorNotFoundException {
+		List<Author> allAuthors = (List<Author>) authorRepository.findAll();
+
+		if (allAuthors.isEmpty()) {
+			throw new AuthorNotFoundException("Could not find any authors!");
+		}
+
+		return allAuthors;
+	}
+
+	// TODO public void deleteById(int id) throws AuthorNotFoundException
+
 	// TODO public Set<Book> findBooksByAuthorId(int id)
 }
