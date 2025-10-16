@@ -75,7 +75,7 @@ public class UserService {
 		return user.getOrders();
 	}
 
-	// TODO public Order getUserOrder(Long userid, Long oid)
+	// DONE public Order getUserOrder(Long userid, Long oid)
 	public Order getUserOrder(Long uid, Long oid) throws UserNotFoundException, OrderNotFoundException {
 		User eUser = userRepository.findById(uid)
 				.orElseThrow(() -> new UserNotFoundException("User with id " + uid + " not found!"));
@@ -90,12 +90,22 @@ public class UserService {
 		return userOrder;
 	}
 
-	// TODO public void deleteOrderForUser(Long userid, Long oid)
-	public void deleteOrderForUser(Long uid, Long oid) throws UserNotFoundException {
+	// DONE public void deleteOrderForUser(Long userid, Long oid)
+	public void deleteOrderForUser(Long uid, Long oid) throws UserNotFoundException, OrderNotFoundException {
 		User eUser = userRepository.findById(uid)
 				.orElseThrow(() -> new UserNotFoundException("User with id " + uid + " not found!"));
-		Set<Order> userOrders = eUser.getOrders();
+		Order order = getUserOrder(uid, oid);
+		eUser.removeOrder(order);
+		userRepository.save(eUser);
 	}
 
-	// TODO public User createOrdersForUser(Long userid, Order order)
+	// DONE public User createOrdersForUser(Long userid, Order order)
+	public User createOrdersForUser(Long uid, Order order) throws UserNotFoundException {
+		User eUser = userRepository.findById(uid)
+				.orElseThrow(() -> new UserNotFoundException("User with id " + uid + " not found!"));
+
+		eUser.addOrder(order);
+		userRepository.save(eUser);
+		return eUser;
+	}
 }
