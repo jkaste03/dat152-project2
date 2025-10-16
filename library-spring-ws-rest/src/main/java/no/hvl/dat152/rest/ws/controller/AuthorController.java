@@ -49,11 +49,24 @@ public class AuthorController {
 		return new ResponseEntity<>(allAuthors, HttpStatus.OK);
 	}
 
-	// TODO - getAuthor (@Mappings, URI, and method)
+	// DONE - getAuthor (@Mappings, URI, and method)
+	@GetMapping("/authors/{aid}")
+	public ResponseEntity<Author> getAuthor(
+		@PathVariable int aid
+	) throws AuthorNotFoundException {
+		Author eAuthor = authorService.findById(aid);
+		return new ResponseEntity<>(eAuthor, HttpStatus.OK);
+	}
 
-	// TODO - getBooksByAuthorId (@Mappings, URI, and method)
+	// DONE - getBooksByAuthorId (@Mappings, URI, and method)
+	@GetMapping("/authors/{aid}/books")
+	public ResponseEntity<Set<Book>> getBooksByAuthorId(
+			@PathVariable int aid) throws AuthorNotFoundException {
+		Set<Book> booksByAuthor = authorService.findBooksByAuthorId(aid);
+		return new ResponseEntity<>(booksByAuthor, HttpStatus.OK);
+	}
 
-	// TODO - createAuthor (@Mappings, URI, and method)
+	// DONE - createAuthor (@Mappings, URI, and method)
 	@PostMapping("/authors")
 	public ResponseEntity<Author> createAuthor(
 			@RequestBody Author author) throws AuthorNotFoundException {
