@@ -15,6 +15,7 @@ import no.hvl.dat152.rest.ws.exceptions.BookNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.UpdateBookFailedException;
 import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Book;
+import no.hvl.dat152.rest.ws.repository.AuthorRepository;
 import no.hvl.dat152.rest.ws.repository.BookRepository;
 
 /**
@@ -48,7 +49,7 @@ public class BookService {
 		return book;
 	}
 	
-	// TODO public Book updateBook(Book book, String isbn)
+	// DONE public Book updateBook(Book book, String isbn)
 	public Book updateBook(Book book, String isbn) {
 		Book eBook = bookRepository.findBookByISBN(isbn);
 		eBook.setAuthors(book.getAuthors());
@@ -58,12 +59,28 @@ public class BookService {
 		return bookRepository.save(eBook);
 	}
 	
-	// TODO public List<Book> findAllPaginate(Pageable page)
+	// DONE public List<Book> findAllPaginate(Pageable page)
+	public List<Book> findAllPaginate(Pageable page) {
+		Page<Book> fPage = bookRepository.findAll(page);
+
+		return fPage.getContent();
+	}
 	
-	// TODO public Set<Author> findAuthorsOfBookByISBN(String isbn)
+	// DONE public Set<Author> findAuthorsOfBookByISBN(String isbn)
+	Set<Author> findAuthorsOfBookByISBN(String isbn) {
+		Book eBook = bookRepository.findBookByISBN(isbn);
+		return eBook.getAuthors();
+	}
+	// DONE public void deleteById(long id)
+	public void deleteById(long id) {
+		bookRepository.findById(id);
+		bookRepository.deleteById(id);
+	}
 	
-	// TODO public void deleteById(long id)
-	
-	// TODO public void deleteByISBN(String isbn) 
+	// DONE public void deleteByISBN(String isbn) 
+	public void deleteByISBN(String isbn) {
+		Book eBook = bookRepository.findBookByISBN(isbn);
+		bookRepository.delete(eBook);
+	}
 	
 }
