@@ -54,7 +54,19 @@ public class AuthorController {
 	// TODO - getBooksByAuthorId (@Mappings, URI, and method)
 
 	// TODO - createAuthor (@Mappings, URI, and method)
+	@PostMapping("/authors")
+	public ResponseEntity<Author> createAuthor(
+			@RequestBody Author author) throws AuthorNotFoundException {
+		authorService.saveAuthor(author);
+		return new ResponseEntity<>(author, HttpStatus.CREATED);
+	}
 
-	// TODO - updateAuthor (@Mappings, URI, and method)
-
+	// DONE - updateAuthor (@Mappings, URI, and method)
+	@PutMapping(path = "/authors/{aid}")
+	public ResponseEntity<Author> updateAuthor(
+			@PathVariable int aid,
+			@RequestBody Author author) throws AuthorNotFoundException {
+		Author updated = authorService.updateAuthor(author, aid);
+		return new ResponseEntity<>(updated, HttpStatus.OK);
+	}
 }
