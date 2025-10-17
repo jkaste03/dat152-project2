@@ -6,10 +6,10 @@ package no.hvl.dat152.rest.ws.controller;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +22,8 @@ import no.hvl.dat152.rest.ws.exceptions.AuthorNotFoundException;
 import no.hvl.dat152.rest.ws.model.Author;
 import no.hvl.dat152.rest.ws.model.Book;
 import no.hvl.dat152.rest.ws.service.AuthorService;
+import no.hvl.dat152.rest.ws.repository.AuthorRepository;
+import no.hvl.dat152.rest.ws.service.AuthorService;
 
 /**
  * 
@@ -30,6 +32,54 @@ import no.hvl.dat152.rest.ws.service.AuthorService;
 @RequestMapping("/elibrary/api/v1")
 public class AuthorController {
 
-	// TODO authority annotation
+	private final AuthorService authorService;
 
+	public AuthorController(AuthorService authorService) {
+		this.authorService = authorService;
+	}
+
+	// DONE - getAllAuthor (@Mappings, URI, and method)
+	@GetMapping("/authors")
+	public ResponseEntity<Object> getAllAuthors() throws AuthorNotFoundException {
+		List<Author> allAuthors = authorService.findAll();
+
+		if (allAuthors.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(allAuthors, HttpStatus.OK);
+	}
+
+	// DONE - getAuthor (@Mappings, URI, and method)
+	@GetMapping("/authors/{aid}")
+	public ResponseEntity<Author> getAuthor(
+		@PathVariable int aid
+	) throws AuthorNotFoundException {
+		Author eAuthor = authorService.findById(aid);
+		return new ResponseEntity<>(eAuthor, HttpStatus.OK);
+	}
+
+	// DONE - getBooksByAuthorId (@Mappings, URI, and method)
+	@GetMapping("/authors/{aid}/books")
+	public ResponseEntity<Set<Book>> getBooksByAuthorId(
+			@PathVariable int aid) throws AuthorNotFoundException {
+		Set<Book> booksByAuthor = authorService.findBooksByAuthorId(aid);
+		return new ResponseEntity<>(booksByAuthor, HttpStatus.OK);
+	}
+
+	// DONE - createAuthor (@Mappings, URI, and method)
+	@PostMapping("/authors")
+	public ResponseEntity<Author> createAuthor(
+			@RequestBody Author author) throws AuthorNotFoundException {
+		authorService.saveAuthor(author);
+		return new ResponseEntity<>(author, HttpStatus.CREATED);
+	}
+
+	// DONE - updateAuthor (@Mappings, URI, and method)
+	@PutMapping(path = "/authors/{aid}")
+	public ResponseEntity<Author> updateAuthor(
+			@PathVariable int aid,
+			@RequestBody Author author) throws AuthorNotFoundException {
+		Author updated = authorService.updateAuthor(author, aid);
+		return new ResponseEntity<>(updated, HttpStatus.OK);
+	}
 }
