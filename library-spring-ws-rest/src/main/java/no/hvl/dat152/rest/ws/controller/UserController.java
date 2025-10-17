@@ -31,6 +31,7 @@ import no.hvl.dat152.rest.ws.service.UserService;
  * @author tdoy
  */
 @RestController
+
 @RequestMapping("/elibrary/api/v1")
 public class UserController {
 

@@ -3,18 +3,23 @@
  */
 package no.hvl.dat152.rest.ws.service;
 
-
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
+import no.hvl.dat152.rest.ws.controller.OrderController;
+import no.hvl.dat152.rest.ws.controller.UserController;
 import no.hvl.dat152.rest.ws.exceptions.OrderNotFoundException;
 import no.hvl.dat152.rest.ws.exceptions.UserNotFoundException;
 import no.hvl.dat152.rest.ws.model.Order;
 import no.hvl.dat152.rest.ws.model.User;
+import no.hvl.dat152.rest.ws.repository.OrderRepository;
 import no.hvl.dat152.rest.ws.repository.UserRepository;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 /**
  * @author tdoy
@@ -22,5 +27,72 @@ import no.hvl.dat152.rest.ws.repository.UserRepository;
 @Service
 public class UserService {
 
-	// TODO copy your solutions from previous tasks!
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private OrderService orderService;
+
+	public List<User> findAllUsers() {
+
+		List<User> allUsers = (List<User>) userRepository.findAll();
+
+		return allUsers;
+	}
+
+	public User findUser(Long id) throws UserNotFoundException {
+
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found"));
+
+		return user;
+	}
+
+	public User saveUser(User user) {
+		return userRepository.save(user);
+	}
+
+	public void deleteUser(Long id) throws UserNotFoundException {
+		User user = findUser(id);
+		userRepository.delete(user);
+
+	}
+
+	public User updateUser(User user, Long id) throws UserNotFoundException {
+		if (!userRepository.existsById(id) || user.getUserid() != id) {
+			throw new UserNotFoundException("User not found for id: " + id);
+		}
+
+		return userRepository.save(user);
+	}
+
+	public Set<Order> getUserOrders(Long userid) throws UserNotFoundException {
+		User user = findUser(userid);
+		return user.getOrders();
+	}
+
+	public Order getUserOrder(Long userid, Long oid) throws OrderNotFoundException, UserNotFoundException {
+		User user = findUser(oid);
+		return user.getOrders().stream().filter(o -> o.getId() == oid).findFirst()
+				.orElseThrow(() -> new OrderNotFoundException("Order not found for id: " + oid));
+	}
+
+	public void deleteOrderForUser(Long userid, Long oid) throws UserNotFoundException, OrderNotFoundException {
+		User user = findUser(userid);
+		try {
+			Order order = getUserOrder(userid, oid);
+			user.getOrders().remove(order);
+		} catch (OrderNotFoundException e) {
+			System.out.println(e);
+		}
+
+		userRepository.save(user);
+	}
+
+	public User createOrdersForUser(Long userid, Order order) throws UserNotFoundException {
+		User user = findUser(userid);
+		user.getOrders().add(order);
+		orderService.saveOrder(order);
+		return user;
+	}
 }

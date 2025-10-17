@@ -27,9 +27,50 @@ import no.hvl.dat152.rest.ws.service.AuthorService;
  * 
  */
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/elibrary/api/v1")
 public class AuthorController {
 
-	// TODO authority annotation
+	@Autowired
+	AuthorService authorService;
 
+	@GetMapping("/authors")
+	public ResponseEntity<List<Author>> getAllAuthors() {
+
+		List<Author> authors = authorService.findAll();
+
+		return new ResponseEntity<>(authors, HttpStatus.OK);
+	}
+
+	@GetMapping("/authors/{id}")
+	public ResponseEntity<Author> getAuthor(@PathVariable Integer id) throws AuthorNotFoundException {
+
+		Author author = authorService.findById(id);
+
+		return new ResponseEntity<>(author, HttpStatus.OK);
+	}
+
+	@GetMapping("/authors/{id}/books")
+	public ResponseEntity<Set<Book>> getBooksByAuthorId(@PathVariable Integer id) throws AuthorNotFoundException {
+
+		Set<Book> authors = authorService.findBooksByAuthorId(id);
+
+		return new ResponseEntity<>(authors, HttpStatus.OK);
+	}
+
+	@PostMapping("/authors")
+	public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
+		Author saveAuthor = authorService.saveAuthor(author);
+
+		return new ResponseEntity<>(saveAuthor, HttpStatus.CREATED);
+	}
+
+	@PutMapping("/authors/{id}")
+	public ResponseEntity<Author> updateAuthor(@PathVariable Integer id, @RequestBody Author author)
+			throws AuthorNotFoundException {
+
+		Author updatedAuthor = authorService.updateAuthor(author, id);
+
+		return new ResponseEntity<>(updatedAuthor, HttpStatus.OK);
+	}
 }

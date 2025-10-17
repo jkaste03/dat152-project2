@@ -3,7 +3,9 @@
  */
 package no.hvl.dat152.rest.ws.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +22,42 @@ import no.hvl.dat152.rest.ws.repository.AuthorRepository;
 @Service
 public class AuthorService {
 
-	// TODO copy your solutions from previous tasks!
-	
-	public Author findById(long id) {
-		
-		// TODO
-		
-		return null;
+	@Autowired
+	private AuthorRepository authorRepository;
+
+	public Author findById(Integer id) throws AuthorNotFoundException {
+
+		Author author = authorRepository.findById(id)
+				.orElseThrow(() -> new AuthorNotFoundException("Author with the id: " + id + "not found!"));
+
+		return author;
+	}
+
+	public Author saveAuthor(Author author) {
+		return authorRepository.save(author);
+	}
+
+	public Author updateAuthor(Author author, Integer id) throws AuthorNotFoundException {
+		if (!authorRepository.existsById(id) || author.getAuthorId() != id) {
+			throw new AuthorNotFoundException("Author: " + author + " not found");
+		}
+
+		return authorRepository.save(author);
+	}
+
+	public List<Author> findAll() {
+		List<Author> authors = new ArrayList<>();
+		authorRepository.findAll().forEach(a -> authors.add(a));
+		return authors;
+	}
+
+	public void deleteById(Integer id) throws AuthorNotFoundException {
+		Author author = findById(id);
+		authorRepository.delete(author);
+	}
+
+	public Set<Book> findBooksByAuthorId(Integer id) throws AuthorNotFoundException {
+		Author author = findById(id);
+		return author.getBooks();
 	}
 }
