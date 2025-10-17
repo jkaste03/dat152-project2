@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,7 @@ import no.hvl.dat152.rest.ws.service.BookService;
  */
 @RestController
 @RequestMapping("/elibrary/api/v1")
+@PreAuthorize("hasRole('ADMIN')")
 public class BookController {
 
 	@Autowired
@@ -88,6 +90,7 @@ public class BookController {
 	@DeleteMapping("/books/{isbn}")
 	public ResponseEntity<Void> deleteBookByISBN(@PathVariable String isbn) throws BookNotFoundException {
 		bookService.deleteByISBN(isbn);
-		return ResponseEntity.ok().build(); // Needed to return 200 with empty body for unit tests (fixed by not serializing the deleted entry)
+		return ResponseEntity.ok().build(); // Needed to return 200 with empty body for unit tests (fixed by not serializing
+																				// the deleted entry)
 	}
 }

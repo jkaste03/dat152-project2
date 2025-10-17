@@ -10,6 +10,7 @@ import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,7 @@ import no.hvl.dat152.rest.ws.service.AuthorService;
  */
 @RestController
 @RequestMapping("/elibrary/api/v1")
+@PreAuthorize("hasRole('ADMIN')")
 public class AuthorController {
 
 	private final AuthorService authorService;
@@ -52,8 +54,7 @@ public class AuthorController {
 	// DONE - getAuthor (@Mappings, URI, and method)
 	@GetMapping("/authors/{aid}")
 	public ResponseEntity<Author> getAuthor(
-		@PathVariable int aid
-	) throws AuthorNotFoundException {
+			@PathVariable int aid) throws AuthorNotFoundException {
 		Author eAuthor = authorService.findById(aid);
 		return new ResponseEntity<>(eAuthor, HttpStatus.OK);
 	}
