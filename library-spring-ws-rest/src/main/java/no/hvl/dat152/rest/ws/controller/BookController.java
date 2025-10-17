@@ -48,7 +48,7 @@ public class BookController {
 		return new ResponseEntity<>(books, HttpStatus.OK);
 	}
 
-	@GetMapping("books/{isbn}")
+	@GetMapping("/books/{isbn}")
 	public ResponseEntity<Object> getBook(@PathVariable String isbn) throws BookNotFoundException {
 
 		Book book = bookService.findByISBN(isbn);
