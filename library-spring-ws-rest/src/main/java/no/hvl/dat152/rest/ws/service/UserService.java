@@ -43,7 +43,7 @@ public class UserService {
 
 	// DONE public User saveUser(User user)
 	public User saveUser(User user) {
-		return userRepository.save(user);
+		return userRepository.save(user); // CrudRepository will throw an error itself if failed
 	}
 
 	// DONE public void deleteUser(Long id) throws UserNotFoundException
@@ -65,7 +65,7 @@ public class UserService {
 	}
 
 	// DONE public Set<Order> getUserOrders(Long userid)
-	Set<Order> getUserOrders(Long userid) throws UserNotFoundException, OrderNotFoundException {
+	public Set<Order> getUserOrders(Long userid) throws UserNotFoundException, OrderNotFoundException {
 
 		User user = userRepository.findById(userid)
 				.orElseThrow(() -> new UserNotFoundException("User with id " + userid + " not found!"));
