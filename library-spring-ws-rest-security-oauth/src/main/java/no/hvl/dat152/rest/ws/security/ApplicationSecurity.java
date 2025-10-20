@@ -3,6 +3,7 @@
  */
 package no.hvl.dat152.rest.ws.security;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,28 +49,37 @@ public class ApplicationSecurity {
 	private JwtAuthenticationToken RoleConverter(Jwt jwt) {
 
 		// initialize
-		Collection<GrantedAuthority> rgrantedAuthorities = null;
-		Collection<GrantedAuthority> cgrantedAuthorities = null;
+		Collection<GrantedAuthority> rgrantedAuthorities = new ArrayList<>();
+		Collection<GrantedAuthority> cgrantedAuthorities = new ArrayList<>();
 
 		// this is realm roles
 		try {
 			Map<String, Collection<String>> realmAccess = jwt.getClaim("realm_access");
-			Collection<String> realmroles = realmAccess.get("roles");
-			rgrantedAuthorities = realmroles.stream()
-					.map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
-					.collect(Collectors.toList());
+			if (realmAccess != null) {
+				Collection<String> realmroles = realmAccess.get("roles");
+				if (realmroles != null) {
+					rgrantedAuthorities.addAll(realmroles.stream()
+							.map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+							.collect(Collectors.toList()));
+				}
+			}
 		} catch (Exception e) {
 			//
 		}
 		// this is client roles
 		try {
 			Map<String, Map<String, Collection<String>>> resource_claim = jwt.getClaim("resource_access");
-			Map<String, Collection<String>> clientAccess = resource_claim.get("dat152oblig2");
-			Collection<String> roles = clientAccess.get("roles");
-
-			cgrantedAuthorities = roles.stream()
-					.map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
-					.collect(Collectors.toList());
+			if (resource_claim != null) {
+				Map<String, Collection<String>> clientAccess = resource_claim.get("dat152oblig2");
+				if (clientAccess != null) {
+					Collection<String> roles = clientAccess.get("roles");
+					if (roles != null) {
+						cgrantedAuthorities.addAll(roles.stream()
+								.map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+								.collect(Collectors.toList()));
+					}
+				}
+			}
 		} catch (Exception e) {
 			//
 		}
@@ -79,8 +89,6 @@ public class ApplicationSecurity {
 		} catch (Exception e) {
 			//
 		}
-
-		System.out.println("All Roles = " + cgrantedAuthorities);
 
 		return new JwtAuthenticationToken(jwt, cgrantedAuthorities);
 	}
