@@ -77,11 +77,10 @@ public class UserController {
 
 	// DONE - deleteUser (@Mappings, URI, and method)
 	@DeleteMapping("/users/{uid}")
-	@PreAuthorize("hasRole('ADMIN') or #id == authentication.details.userid")
+	@PreAuthorize("hasRole('ADMIN') or #uid == authentication.details.userid")
 	public ResponseEntity<User> deleteUser(@PathVariable Long uid) throws UserNotFoundException {
-		User eUser = userService.findUser(uid);
 		userService.deleteUser(uid);
-		return new ResponseEntity<>(eUser, HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	// DONE - getUserOrders (@Mappings, URI=/users/{id}/orders, and method)
@@ -98,7 +97,7 @@ public class UserController {
 	// DONE - getUserOrder (@Mappings, URI=/users/{uid}/orders/{oid}, and method)
 
 	@GetMapping(value = "/users/{uid}/orders/{oid}")
-	@PreAuthorize("hasRole('ADMIN') or #id == authentication.details.userid")
+	@PreAuthorize("hasRole('ADMIN') or #uid == authentication.details.userid")
 	public ResponseEntity<Order> getUserOrder(@PathVariable long uid, @PathVariable long oid)
 			throws UserNotFoundException, OrderNotFoundException {
 
@@ -108,7 +107,7 @@ public class UserController {
 	// DONE - deleteUserOrder (@Mappings, URI, and method)
 
 	@DeleteMapping(value = "/users/{uid}/orders/{oid}")
-	@PreAuthorize("hasRole('ADMIN') or #id == authentication.details.userid")
+	@PreAuthorize("hasRole('ADMIN') or #uid == authentication.details.userid")
 	public ResponseEntity<Void> deleteUserOrder(@PathVariable long uid, @PathVariable long oid)
 			throws UserNotFoundException, OrderNotFoundException {
 
@@ -121,7 +120,7 @@ public class UserController {
 	// DONE - createUserOrder (@Mappings, URI, and method) + HATEOAS links
 
 	@PostMapping("/users/{uid}/orders")
-	@PreAuthorize("hasRole('ADMIN') or #id == authentication.details.userid")
+	@PreAuthorize("hasRole('ADMIN') or #uid == authentication.details.userid")
 	public ResponseEntity<Object> createUserOrder(@PathVariable Long uid, @RequestBody Order order)
 			throws UserNotFoundException, OrderNotFoundException {
 
